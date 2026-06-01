@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Neon Survivor — Free Vampire Survivors-Style Browser Game | NeonRush Games</title>
+  <meta name="description" content="Play Neon Survivor free. Survive endless neon enemy waves, auto-attack, level up, choose upgrades. Inspired by Vampire Survivors. No download needed.">
+  <meta name="keywords" content="neon survivor, vampire survivors browser game, free survival game, roguelite browser game">
+  <link rel="canonical" href="https://neonrushgames.com/neon-survivor/">
+  <meta property="og:title" content="Neon Survivor — Free Vampire Survivors-Style Browser Game">
+  <meta property="og:description" content="Play Neon Survivor free. Survive endless neon enemy waves, auto-attack, level up, choose upgrades. Inspired by Vampire Survivors. No download needed.">
+  <meta property="og:url" content="https://neonrushgames.com/neon-survivor/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NeonRush Games">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Neon Survivor — Free Vampire Survivors-Style Browser Game">
+  <meta name="twitter:description" content="Play Neon Survivor free. Survive endless neon enemy waves, auto-attack, level up, choose upgrades. Inspired by Vampire Survivors. No download needed.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Neon Survivor",
+    "description": "Play Neon Survivor free. Survive endless neon enemy waves, auto-attack, level up, choose upgrades. Inspired by Vampire Survivors. No download needed.",
+    "url": "https://neonrushgames.com/neon-survivor/",
+    "genre": ["Survival", "Roguelite"],
+    "gamePlatform": "Web Browser",
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {"@type": "Organization", "name": "NeonRush Games", "url": "https://neonrushgames.com"}
+  }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../game-page.css">
+  <link rel="stylesheet" href="../survivor.css">
+</head>
+<body style="margin:0;background:#050110;overflow-x:hidden">
+
+  <!-- Game Wrapper (contains all game DOM elements) -->
+  <div class="game-wrapper">
+
+    <!-- Main Game Canvas -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- ========== HUD OVERLAY ========== -->
+    <div id="hud" class="hud hidden">
+      <div class="hud-top-bar">
+        <div class="hud-left">
+          <div class="hud-health-wrap">
+            <div class="hud-health-bar">
+              <div class="hud-health-fill" id="hud-hp-fill"></div>
+            </div>
+            <span class="hud-health-text" id="hud-hp-text">100/100</span>
+          </div>
+          <div class="hud-xp-wrap">
+            <div class="hud-xp-bar">
+              <div class="hud-xp-fill" id="hud-xp-fill"></div>
+            </div>
+            <span class="hud-xp-text" id="hud-xp-text">Lv 1</span>
+          </div>
+        </div>
+        <div class="hud-right">
+          <div class="hud-stat"><i class="fas fa-crosshairs"></i> <span id="hud-kills">0</span></div>
+          <div class="hud-stat"><i class="fas fa-star"></i> <span id="hud-score">0</span></div>
+          <div class="hud-stat"><i class="fas fa-clock"></i> <span id="hud-time">0:00</span></div>
+        </div>
+      </div>
+      <div class="hud-controls">
+        <button id="btn-ingame-pause" class="hud-btn" aria-label="Pause"><i class="fas fa-pause"></i></button>
+      </div>
+      <!-- Minimap -->
+      <div class="hud-minimap">
+        <canvas id="minimap-canvas" width="120" height="120"></canvas>
+      </div>
+      <!-- Active Weapons Display -->
+      <div class="hud-weapons" id="hud-weapons"></div>
+    </div>
+
+    <!-- ========== VIRTUAL JOYSTICK ========== -->
+    <div id="joystick-zone" class="joystick-zone hidden">
+      <div id="joystick-base" class="joystick-base">
+        <div id="joystick-thumb" class="joystick-thumb"></div>
+      </div>
+    </div>
+
+    <!-- ========== MAIN MENU SCREEN ========== -->
+    <div id="menu-screen" class="overlay-screen">
+      <div class="menu-content glass-panel">
+        <h1 class="game-title neon-glow-cyan">NEON<br><span class="neon-glow-pink">SURVIVOR</span></h1>
+        <p class="menu-subtitle">Survive the neon void. Upgrade. Dominate.</p>
+
+        <div class="mode-select" id="mode-select">
+          <button class="mode-btn mode-active" data-mode="endless"><i class="fas fa-infinity"></i> ENDLESS</button>
+          <button class="mode-btn" data-mode="boss_rush"><i class="fas fa-skull"></i> BOSS RUSH</button>
+          <button class="mode-btn" data-mode="hardcore"><i class="fas fa-fire"></i> HARDCORE</button>
+          <button class="mode-btn" data-mode="daily"><i class="fas fa-calendar-day"></i> DAILY</button>
+        </div>
+
+        <button id="btn-play" class="btn-glow btn-play"><i class="fas fa-play"></i> ENGAGE</button>
+
+        <div class="menu-records" id="menu-records">
+          <div class="record-item"><span>Best Time</span><span id="rec-time">0:00</span></div>
+          <div class="record-item"><span>High Score</span><span id="rec-score">0</span></div>
+          <div class="record-item"><span>Best Level</span><span id="rec-level">0</span></div>
+          <div class="record-item"><span>Total Kills</span><span id="rec-kills">0</span></div>
+        </div>
+
+        <div class="menu-footer">
+          <button id="btn-sound-toggle" class="icon-btn" aria-label="Toggle Sound"><i class="fas fa-volume-up"></i></button>
+          <a href="/" class="icon-btn" aria-label="Back to Arcade"><i class="fas fa-home"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== LEVEL UP SCREEN ========== -->
+    <div id="levelup-screen" class="overlay-screen hidden">
+      <div class="levelup-content">
+        <h2 class="levelup-title neon-glow-cyan">LEVEL UP!</h2>
+        <p class="levelup-sub" id="levelup-level">Level 2</p>
+        <div class="upgrade-choices" id="upgrade-choices">
+          <!-- 3 upgrade cards injected by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAUSE SCREEN ========== -->
+    <div id="pause-screen" class="overlay-screen hidden">
+      <div class="pause-content glass-panel">
+        <h2 class="neon-glow-cyan">PAUSED</h2>
+        <div class="pause-stats" id="pause-stats"></div>
+        <div class="pause-buttons">
+          <button id="btn-resume" class="btn-glow">RESUME</button>
+          <button id="btn-restart-pause" class="btn-glow btn-secondary">RESTART</button>
+          <button id="btn-menu-pause" class="btn-glow btn-secondary">MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== GAME OVER SCREEN ========== -->
+    <div id="gameover-screen" class="overlay-screen hidden">
+      <div class="gameover-content glass-panel">
+        <h2 class="neon-glow-pink">SIMULATION<br>TERMINATED</h2>
+        <div class="gameover-stats" id="gameover-stats"></div>
+        <p class="gameover-best" id="gameover-best"></p>
+        <div class="gameover-buttons">
+          <button id="btn-retry" class="btn-glow">RETRY</button>
+          <button id="btn-menu-over" class="btn-glow btn-secondary">MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ACHIEVEMENT TOAST ========== -->
+    <div id="achievement-toast" class="achievement-toast" role="alert" aria-live="polite">
+      <div class="toast-icon" id="ach-icon">🏆</div>
+      <div class="toast-body">
+        <div class="toast-label">ACHIEVEMENT UNLOCKED</div>
+        <div class="toast-name" id="ach-name">Achievement</div>
+      </div>
+    </div>
+
+    <!-- ========== BOSS WARNING ========== -->
+    <div id="boss-warning" class="boss-warning hidden">
+      <span>⚠ WARNING: BOSS INCOMING ⚠</span>
+    </div>
+
+  </div>
+
+  <!-- SEO Content -->
+  <div class="seo-content">
+    <div class="seo-inner">
+      <h1>Neon Survivor — Free Vampire Survivors-Style Arcade Game</h1>
+      <p class="seo-tagline">Survive endless waves of neon enemies, auto-attack your way through hordes, level up, and choose powerful upgrades — all in your browser, no download required.</p>
+
+      <h2>About Neon Survivor</h2>
+      <p>Neon Survivor drops you into a pulsating cyberpunk arena where survival is the only objective. Inspired by the addictive loop of Vampire Survivors, this free browser game strips away complexity and replaces it with pure arcade adrenaline. Your character attacks automatically — your job is to move, dodge, and decide which upgrades will keep you alive longest. Every few seconds a new wave crashes in, each denser and faster than the last, and the XP orbs left behind by fallen enemies fuel a leveling system that lets you shape your build on the fly.</p>
+      <p>With sixteen distinct upgrades ranging from orbital shields and piercing projectiles to area-of-effect novas and health regeneration, no two runs play out the same way. Six enemy archetypes — from swarm drones and charging brutes to teleporting phantoms and screen-filling bosses — force you to constantly adapt your strategy. Whether you're chasing a personal best in Endless mode, battling back-to-back bosses in Boss Rush, surviving with a single hit point in Hardcore, or competing on the seeded Daily leaderboard, Neon Survivor offers hundreds of hours of replayability with zero installation.</p>
+
+      <h3>How to Play</h3>
+      <p>Move your character to dodge incoming enemies — combat is fully automatic. As you defeat enemies, collect the XP orbs they drop to fill your experience bar. Each level-up presents three random upgrade cards; pick the one that best complements your current build. Survive as long as possible, rack up kills, and push your high score higher every run. Boss enemies appear at regular intervals and require quick reflexes and smart positioning to defeat.</p>
+
+      <h3>Controls</h3>
+      <table class="controls-table">
+        <thead><tr><th>Platform</th><th>Action</th><th>Input</th></tr></thead>
+        <tbody>
+          <tr><td>Desktop</td><td>Move</td><td>WASD or Arrow Keys</td></tr>
+          <tr><td>Mobile</td><td>Move</td><td>Virtual Joystick</td></tr>
+          <tr><td>Both</td><td>Attack</td><td>Automatic</td></tr>
+          <tr><td>Both</td><td>Pause</td><td>Pause Button / Escape</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Game Modes</h3>
+      <ul>
+        <li><strong>Endless</strong> — Survive as long as possible against ever-escalating waves. The classic experience with no time limit.</li>
+        <li><strong>Boss Rush</strong> — Face a relentless gauntlet of boss enemies with minimal breathing room between encounters.</li>
+        <li><strong>Hardcore</strong> — One mistake and it's over. Reduced health, faster enemies, and no second chances for elite players.</li>
+        <li><strong>Daily Challenge</strong> — A seeded run that changes every 24 hours. Compare your score against the community and prove your skill.</li>
+      </ul>
+
+      <h3>Features</h3>
+      <ul>
+        <li><strong>16 Unique Upgrades</strong> — Build synergies from projectile weapons, defensive shields, AoE novas, speed boosts, and more.</li>
+        <li><strong>6 Enemy Types</strong> — From swarming drones to teleporting phantoms and screen-shaking bosses, each enemy demands a different approach.</li>
+        <li><strong>Auto-Attack System</strong> — Focus on positioning and decision-making while your weapons fire automatically.</li>
+        <li><strong>XP &amp; Leveling</strong> — Collect experience orbs, level up mid-run, and choose upgrades that stack and synergize.</li>
+        <li><strong>Boss Fights</strong> — Massive bosses with unique attack patterns appear at timed intervals to test your build.</li>
+        <li><strong>Achievement System</strong> — Unlock achievements for milestones like total kills, survival time, and specific upgrade combos.</li>
+        <li><strong>Web Audio Soundtrack</strong> — Procedurally generated cyberpunk audio that intensifies as the action heats up.</li>
+        <li><strong>Mobile-Friendly</strong> — Fully playable on phones and tablets with a responsive virtual joystick.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- More Games -->
+  <div class="more-games">
+    <div class="more-games-inner">
+      <h2>More Free Games on NeonRush Games</h2>
+      <div class="mg-grid">
+        <a href="/neon-cyber-runner/" class="mg-card"><div class="mg-icon" style="color:#ff007f"><i class="fas fa-bolt"></i></div><div class="mg-info"><div class="mg-name" style="color:#ff007f">Cyber Runner</div><div class="mg-desc">Endless cyberpunk runner</div></div></a>
+        <a href="/neon-breaker/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-circle-notch"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Breaker</div><div class="mg-desc">Brick breaker arcade</div></div></a>
+        <a href="/neon-cosmic-merge/" class="mg-card"><div class="mg-icon" style="color:#a200ff"><i class="fas fa-meteor"></i></div><div class="mg-info"><div class="mg-name" style="color:#a200ff">Cosmic Merge</div><div class="mg-desc">Merge puzzle game</div></div></a>
+        <a href="/neon-dash/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-running"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Dash</div><div class="mg-desc">Endless runner with skins</div></div></a>
+        <a href="/neon-snake-royale/" class="mg-card"><div class="mg-icon" style="color:#00ff66"><i class="fas fa-dragon"></i></div><div class="mg-info"><div class="mg-name" style="color:#00ff66">Snake Royale</div><div class="mg-desc">Snake with progression</div></div></a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/neon-cyber-runner/">Cyber Runner</a>
+      <a href="/neon-breaker/">Neon Breaker</a>
+      <a href="/neon-cosmic-merge/">Cosmic Merge</a>
+      <a href="/neon-survivor/">Neon Survivor</a>
+      <a href="/neon-dash/">Neon Dash</a>
+      <a href="/neon-snake-royale/">Snake Royale</a>
+    </div>
+    <p>&copy; 2026 <a href="/">NeonRush Games</a>. All games free to play.</p>
+  </footer>
+
+  <script src="../survivor.js"></script>
+</body>
+</html>

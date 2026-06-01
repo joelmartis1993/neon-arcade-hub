@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Neon Cyber Runner — Free Online Cyberpunk Running Game | NeonRush Games</title>
+  <meta name="description" content="Play Neon Cyber Runner free in your browser. Dodge neon barriers, slide under laser gates, and collect power cells in this addictive cyberpunk endless runner. Mobile-friendly.">
+  <meta name="keywords" content="neon cyber runner, cyberpunk runner game, free endless runner, browser running game, html5 runner">
+  <link rel="canonical" href="https://neonrushgames.com/neon-cyber-runner/">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Neon Cyber Runner — Free Cyberpunk Endless Runner">
+  <meta property="og:description" content="Play Neon Cyber Runner free in your browser. Dodge neon barriers, slide under laser gates, and collect power cells in this addictive cyberpunk endless runner. Mobile-friendly.">
+  <meta property="og:url" content="https://neonrushgames.com/neon-cyber-runner/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NeonRush Games">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Neon Cyber Runner — Free Cyberpunk Endless Runner">
+  <meta name="twitter:description" content="Play Neon Cyber Runner free in your browser. Dodge neon barriers, slide under laser gates, and collect power cells in this addictive cyberpunk endless runner. Mobile-friendly.">
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Neon Cyber Runner",
+    "description": "Play Neon Cyber Runner free in your browser. Dodge neon barriers, slide under laser gates, and collect power cells in this addictive cyberpunk endless runner. Mobile-friendly.",
+    "url": "https://neonrushgames.com/neon-cyber-runner/",
+    "genre": ["Endless Runner"],
+    "gamePlatform": "Web Browser",
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {"@type": "Organization", "name": "NeonRush Games", "url": "https://neonrushgames.com"}
+  }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../game-page.css">
+</head>
+<body style="margin:0;background:#050110;overflow-x:hidden">
+
+  <!-- Game Container -->
+  <div class="game-wrapper">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Menu Overlay -->
+    <div class="gp-overlay" id="gp-menu">
+      <div class="gp-modal">
+        <i class="fas fa-bolt" style="font-size:2.5rem;color:#ff007f"></i>
+        <h2 style="color:#ff007f;text-shadow:0 0 10px #ff007f">Neon Cyber Runner</h2>
+        <p>Dash through the neon grid. Dodge barriers. Survive the surge.</p>
+        <button class="gp-btn" id="gp-play" style="border-color:#ff007f;color:#ff007f">▶ PLAY</button>
+        <a href="/" class="gp-btn gp-btn-sec">← Back to Arcade</a>
+      </div>
+    </div>
+
+    <!-- HUD -->
+    <div class="gp-hud" id="gp-hud" style="display:none">
+      <div class="gp-hud-score"><span class="gp-lbl">SCORE</span> <span id="gp-score">0</span></div>
+      <button class="gp-hud-btn" id="gp-pause-btn"><i class="fas fa-pause"></i></button>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div class="gp-overlay" id="gp-pause" style="display:none">
+      <div class="gp-modal">
+        <h2>PAUSED</h2>
+        <button class="gp-btn" id="gp-resume">RESUME</button>
+        <button class="gp-btn gp-btn-sec" id="gp-restart-p">RESTART</button>
+        <a href="/" class="gp-btn gp-btn-sec">MENU</a>
+      </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div class="gp-overlay" id="gp-over" style="display:none">
+      <div class="gp-modal">
+        <h2 style="color:var(--gp-pink);text-shadow:0 0 10px var(--gp-pink)">GAME OVER</h2>
+        <div class="gp-score-big" id="gp-final">0</div>
+        <p class="gp-new-best" id="gp-best-msg"></p>
+        <button class="gp-btn" id="gp-retry">↻ RETRY</button>
+        <a href="/" class="gp-btn gp-btn-sec">MENU</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO Content -->
+  <div class="seo-content">
+    <div class="seo-inner">
+      <h1>Neon Cyber Runner — Free Cyberpunk Endless Runner Game</h1>
+      <p class="seo-tagline">Dash through a neon-lit cyberpunk cityscape at breakneck speed. Dodge, slide, and survive.</p>
+
+      <h2>About Neon Cyber Runner</h2>
+      <p>Neon Cyber Runner drops you into the heart of a sprawling cyberpunk metropolis rendered entirely in glowing neon wireframes. As a rogue data courier sprinting across the rooftops of a dystopian megacity, your mission is simple: run as far as you can without being caught. The city throws everything it has at you — towering energy barriers that crackle with pink lightning, razor-thin laser gates that sweep across your path, and shifting platforms that collapse the moment you touch them. Every second you survive, the world accelerates, the music intensifies, and the obstacles stack up faster and meaner than before.</p>
+      <p>Scattered across the neon grid are glowing power cells — collectible energy orbs that boost your score multiplier and charge your shield meter. Grab enough of them and you'll activate a temporary electromagnetic shield that lets you smash through a single barrier unharmed. Timing your jumps, slides, and power cell pickups becomes a high-stakes rhythm game as you chase the next high score. The procedurally generated obstacle patterns mean no two runs are ever identical, keeping the gameplay fresh across hundreds of attempts.</p>
+      <p>Built entirely in HTML5 and JavaScript, Neon Cyber Runner runs directly in your browser with zero downloads or installs. The retro-arcade aesthetic is powered by a custom canvas renderer that delivers silky-smooth 60fps animation alongside a Web Audio synthesized soundtrack that reacts dynamically to your speed. Whether you're on a desktop with a mechanical keyboard or on a phone during your commute, the controls feel tight and responsive. Jump into the neon grid and see how long you can survive.</p>
+
+      <h3>How to Play</h3>
+      <p>Press Play to start your run. Your character sprints forward automatically — your job is to react to incoming obstacles. Jump over low barriers and energy fences by pressing Space or swiping up on mobile. Slide under laser gates and overhead hazards by pressing the Down arrow or swiping down. Collect the floating power cells to increase your score multiplier. The longer you run, the faster the world moves. One collision and it's game over — but you can always retry instantly and try to beat your personal best.</p>
+
+      <h3>Controls</h3>
+      <table class="controls-table">
+        <thead><tr><th>Action</th><th>Desktop</th><th>Mobile</th></tr></thead>
+        <tbody>
+          <tr><td>Jump</td><td><span class="key-badge">SPACE</span> / <span class="key-badge">↑</span></td><td>Swipe Up</td></tr>
+          <tr><td>Slide</td><td><span class="key-badge">↓</span></td><td>Swipe Down</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Features</h3>
+      <ul>
+        <li>Smooth 60fps gameplay with a custom HTML5 canvas renderer</li>
+        <li>Progressive difficulty — speed and obstacle density ramp up over time</li>
+        <li>Keyboard and touch controls for desktop and mobile play</li>
+        <li>Vibrant neon cyberpunk visuals with particle effects and glow shaders</li>
+        <li>Web Audio synthesized soundtrack that responds to gameplay speed</li>
+        <li>LocalStorage high scores — compete against your own personal best</li>
+        <li>Fully mobile-friendly with responsive canvas scaling</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- More Games -->
+  <div class="more-games">
+    <div class="more-games-inner">
+      <h2>More Free Games on NeonRush Games</h2>
+      <div class="mg-grid">
+        <a href="/neon-breaker/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-circle-notch"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Breaker</div><div class="mg-desc">Brick breaker arcade</div></div></a>
+        <a href="/neon-cosmic-merge/" class="mg-card"><div class="mg-icon" style="color:#a200ff"><i class="fas fa-meteor"></i></div><div class="mg-info"><div class="mg-name" style="color:#a200ff">Cosmic Merge</div><div class="mg-desc">Merge puzzle game</div></div></a>
+        <a href="/neon-survivor/" class="mg-card"><div class="mg-icon" style="color:#ffaa00"><i class="fas fa-crosshairs"></i></div><div class="mg-info"><div class="mg-name" style="color:#ffaa00">Neon Survivor</div><div class="mg-desc">Vampire Survivors-style</div></div></a>
+        <a href="/neon-dash/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-running"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Dash</div><div class="mg-desc">Endless runner with skins</div></div></a>
+        <a href="/neon-snake-royale/" class="mg-card"><div class="mg-icon" style="color:#00ff66"><i class="fas fa-dragon"></i></div><div class="mg-info"><div class="mg-name" style="color:#00ff66">Snake Royale</div><div class="mg-desc">Snake with progression</div></div></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/neon-cyber-runner/">Cyber Runner</a>
+      <a href="/neon-breaker/">Neon Breaker</a>
+      <a href="/neon-cosmic-merge/">Cosmic Merge</a>
+      <a href="/neon-survivor/">Neon Survivor</a>
+      <a href="/neon-dash/">Neon Dash</a>
+      <a href="/neon-snake-royale/">Snake Royale</a>
+    </div>
+    <p>&copy; 2026 <a href="/">NeonRush Games</a>. All games free to play.</p>
+  </footer>
+
+  <script src="../responsive.js"></script>
+  <script src="../sound.js"></script>
+  <script src="../runner.js"></script>
+  <script>
+  // Lightweight Game Page Manager
+  (function(){
+    const canvas = document.getElementById('game-canvas');
+    const menuEl = document.getElementById('gp-menu');
+    const hudEl = document.getElementById('gp-hud');
+    const pauseEl = document.getElementById('gp-pause');
+    const overEl = document.getElementById('gp-over');
+    const scoreEl = document.getElementById('gp-score');
+    const finalEl = document.getElementById('gp-final');
+    const bestEl = document.getElementById('gp-best-msg');
+    let game = null, loopId = null, bestScore = parseInt(localStorage.getItem('nrg_runner_best') || '0');
+
+    function startGame() {
+      menuEl.style.display = 'none';
+      overEl.style.display = 'none';
+      pauseEl.style.display = 'none';
+      hudEl.style.display = 'flex';
+      scoreEl.textContent = '0';
+      if (window.sound) { window.sound.init(); window.sound.startBGM(); }
+      if (loopId) cancelAnimationFrame(loopId);
+      game = new window.CyberRunner(
+        'game-canvas',
+        function(finalScore) { gameOver(finalScore); },
+        function(score) { scoreEl.textContent = score; },
+        function() {}
+      );
+      game.active = true;
+      game.start();
+      tick();
+    }
+
+    function tick() {
+      if (!game || !game.active) return;
+      game.update();
+      game.draw();
+      loopId = requestAnimationFrame(tick);
+    }
+
+    function gameOver(finalScore) {
+      if (loopId) cancelAnimationFrame(loopId);
+      hudEl.style.display = 'none';
+      finalEl.textContent = finalScore;
+      if (finalScore > bestScore) {
+        bestScore = finalScore;
+        localStorage.setItem('nrg_runner_best', bestScore);
+        bestEl.textContent = '🏆 NEW BEST SCORE!';
+      } else {
+        bestEl.textContent = 'Best: ' + bestScore;
+      }
+      overEl.style.display = 'flex';
+    }
+
+    document.getElementById('gp-play').addEventListener('click', startGame);
+    document.getElementById('gp-retry').addEventListener('click', startGame);
+    document.getElementById('gp-pause-btn').addEventListener('click', function() {
+      if (game && game.gameState === 'PLAYING') { game.gameState = 'PAUSED'; pauseEl.style.display = 'flex'; }
+    });
+    document.getElementById('gp-resume').addEventListener('click', function() {
+      if (game) { game.gameState = 'PLAYING'; pauseEl.style.display = 'none'; }
+    });
+    document.getElementById('gp-restart-p').addEventListener('click', function() { pauseEl.style.display = 'none'; startGame(); });
+  })();
+  </script>
+</body>
+</html>

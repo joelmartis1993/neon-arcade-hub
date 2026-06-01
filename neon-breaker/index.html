@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Neon Breaker — Free Online Cyberpunk Brick Breaker Game | NeonRush Games</title>
+  <meta name="description" content="Play Neon Breaker free. Smash glowing bricks with plasma balls, trigger multi-ball splits, and fire lasers in this neon arcade brick breaker. No download needed.">
+  <meta name="keywords" content="neon breaker, cyberpunk brick breaker, free breakout game, browser arcade game, html5 brick breaker">
+  <link rel="canonical" href="https://neonrushgames.com/neon-breaker/">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Neon Breaker — Free Cyberpunk Brick Breaker">
+  <meta property="og:description" content="Play Neon Breaker free. Smash glowing bricks with plasma balls, trigger multi-ball splits, and fire lasers in this neon arcade brick breaker. No download needed.">
+  <meta property="og:url" content="https://neonrushgames.com/neon-breaker/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NeonRush Games">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Neon Breaker — Free Cyberpunk Brick Breaker">
+  <meta name="twitter:description" content="Play Neon Breaker free. Smash glowing bricks with plasma balls, trigger multi-ball splits, and fire lasers in this neon arcade brick breaker. No download needed.">
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Neon Breaker",
+    "description": "Play Neon Breaker free. Smash glowing bricks with plasma balls, trigger multi-ball splits, and fire lasers in this neon arcade brick breaker. No download needed.",
+    "url": "https://neonrushgames.com/neon-breaker/",
+    "genre": ["Brick Breaker", "Arcade"],
+    "gamePlatform": "Web Browser",
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {"@type": "Organization", "name": "NeonRush Games", "url": "https://neonrushgames.com"}
+  }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../game-page.css">
+</head>
+<body style="margin:0;background:#050110;overflow-x:hidden">
+
+  <!-- Game Container -->
+  <div class="game-wrapper">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Menu Overlay -->
+    <div class="gp-overlay" id="gp-menu">
+      <div class="gp-modal">
+        <i class="fas fa-circle-notch" style="font-size:2.5rem;color:#00f0ff"></i>
+        <h2 style="color:#00f0ff;text-shadow:0 0 10px #00f0ff">Neon Breaker</h2>
+        <p>Shatter the grid. Unleash the plasma. Break everything.</p>
+        <button class="gp-btn" id="gp-play" style="border-color:#00f0ff;color:#00f0ff">▶ PLAY</button>
+        <a href="/" class="gp-btn gp-btn-sec">← Back to Arcade</a>
+      </div>
+    </div>
+
+    <!-- HUD -->
+    <div class="gp-hud" id="gp-hud" style="display:none">
+      <div class="gp-hud-score"><span class="gp-lbl">SCORE</span> <span id="gp-score">0</span></div>
+      <button class="gp-hud-btn" id="gp-pause-btn"><i class="fas fa-pause"></i></button>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div class="gp-overlay" id="gp-pause" style="display:none">
+      <div class="gp-modal">
+        <h2>PAUSED</h2>
+        <button class="gp-btn" id="gp-resume">RESUME</button>
+        <button class="gp-btn gp-btn-sec" id="gp-restart-p">RESTART</button>
+        <a href="/" class="gp-btn gp-btn-sec">MENU</a>
+      </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div class="gp-overlay" id="gp-over" style="display:none">
+      <div class="gp-modal">
+        <h2 style="color:var(--gp-pink);text-shadow:0 0 10px var(--gp-pink)">GAME OVER</h2>
+        <div class="gp-score-big" id="gp-final">0</div>
+        <p class="gp-new-best" id="gp-best-msg"></p>
+        <button class="gp-btn" id="gp-retry">↻ RETRY</button>
+        <a href="/" class="gp-btn gp-btn-sec">MENU</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO Content -->
+  <div class="seo-content">
+    <div class="seo-inner">
+      <h1>Neon Breaker — Free Cyberpunk Brick Breaker Game</h1>
+      <p class="seo-tagline">Smash glowing bricks, trigger chain reactions, and unleash plasma chaos in this neon-drenched arcade classic.</p>
+
+      <h2>About Neon Breaker</h2>
+      <p>Neon Breaker reimagines the timeless brick breaker formula through the lens of a cyberpunk fever dream. Your paddle is a magnetically-charged plasma rail hovering at the bottom of a neon grid, and your ball is a superheated plasma sphere that tears through layers of glowing bricks with satisfying impact. Each brick you shatter sends cascading particle explosions across the screen, lighting up the dark void with cyan, magenta, and electric blue sparks. Some bricks are reinforced with energy shields that require multiple hits, while others contain power-up cores that split your ball into a devastating multi-ball barrage or arm your paddle with a short-range laser cannon.</p>
+      <p>The game features dozens of hand-crafted brick formations that escalate in complexity as you advance through levels. Early stages ease you in with simple rectangular grids, but later formations introduce moving bricks, indestructible deflector blocks that redirect your plasma ball at unpredictable angles, and explosive chain-reaction bricks that can clear entire rows in a single satisfying detonation. Your score multiplier grows with every consecutive brick hit, rewarding precise aim and strategic use of multi-ball splits. Miss the ball and your multiplier resets — so every bounce matters.</p>
+      <p>Designed as a pure HTML5 browser game, Neon Breaker requires no downloads, plugins, or installations. The custom canvas engine delivers buttery 60fps animation with real-time glow effects and particle systems, while the Web Audio synthesizer generates a pulsing electronic soundtrack that intensifies as you clear each level. The controls are deliberately simple — just move your paddle left and right — making it instantly accessible on both desktop and touchscreen devices. Whether you have five minutes on a lunch break or an hour to chase the leaderboard, Neon Breaker delivers that perfect arcade flow state.</p>
+
+      <h3>How to Play</h3>
+      <p>Press Play to launch the plasma ball from your paddle. Move your paddle left and right using your mouse on desktop or by dragging your finger on mobile. The ball bounces off walls, the ceiling, and your paddle — your goal is to break every brick on screen without letting the ball fall past your paddle. Catch power-up drops to activate multi-ball, laser fire, and paddle extensions. Clear all bricks to advance to the next level. If the ball drops below your paddle, you lose a life. Lose all lives and it's game over.</p>
+
+      <h3>Controls</h3>
+      <table class="controls-table">
+        <thead><tr><th>Action</th><th>Desktop</th><th>Mobile</th></tr></thead>
+        <tbody>
+          <tr><td>Move Paddle</td><td><span class="key-badge">Mouse</span></td><td>Drag</td></tr>
+          <tr><td>Fire Laser</td><td><span class="key-badge">Click</span> / <span class="key-badge">SPACE</span></td><td>Double-Tap</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Features</h3>
+      <ul>
+        <li>Classic brick breaker gameplay with modern neon cyberpunk visuals</li>
+        <li>Dozens of unique brick formations with escalating difficulty</li>
+        <li>Power-ups including multi-ball split, laser cannon, and paddle extend</li>
+        <li>Chain-reaction explosive bricks for massive combo scores</li>
+        <li>Smooth 60fps HTML5 canvas rendering with particle effects</li>
+        <li>Web Audio synthesized soundtrack that reacts to gameplay</li>
+        <li>Mouse and touch controls for seamless desktop and mobile play</li>
+        <li>LocalStorage high scores — track your personal best across sessions</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- More Games -->
+  <div class="more-games">
+    <div class="more-games-inner">
+      <h2>More Free Games on NeonRush Games</h2>
+      <div class="mg-grid">
+        <a href="/neon-cyber-runner/" class="mg-card"><div class="mg-icon" style="color:#ff007f"><i class="fas fa-bolt"></i></div><div class="mg-info"><div class="mg-name" style="color:#ff007f">Cyber Runner</div><div class="mg-desc">Endless cyberpunk runner</div></div></a>
+        <a href="/neon-cosmic-merge/" class="mg-card"><div class="mg-icon" style="color:#a200ff"><i class="fas fa-meteor"></i></div><div class="mg-info"><div class="mg-name" style="color:#a200ff">Cosmic Merge</div><div class="mg-desc">Merge puzzle game</div></div></a>
+        <a href="/neon-survivor/" class="mg-card"><div class="mg-icon" style="color:#ffaa00"><i class="fas fa-crosshairs"></i></div><div class="mg-info"><div class="mg-name" style="color:#ffaa00">Neon Survivor</div><div class="mg-desc">Vampire Survivors-style</div></div></a>
+        <a href="/neon-dash/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-running"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Dash</div><div class="mg-desc">Endless runner with skins</div></div></a>
+        <a href="/neon-snake-royale/" class="mg-card"><div class="mg-icon" style="color:#00ff66"><i class="fas fa-dragon"></i></div><div class="mg-info"><div class="mg-name" style="color:#00ff66">Snake Royale</div><div class="mg-desc">Snake with progression</div></div></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/neon-cyber-runner/">Cyber Runner</a>
+      <a href="/neon-breaker/">Neon Breaker</a>
+      <a href="/neon-cosmic-merge/">Cosmic Merge</a>
+      <a href="/neon-survivor/">Neon Survivor</a>
+      <a href="/neon-dash/">Neon Dash</a>
+      <a href="/neon-snake-royale/">Snake Royale</a>
+    </div>
+    <p>&copy; 2026 <a href="/">NeonRush Games</a>. All games free to play.</p>
+  </footer>
+
+  <script src="../responsive.js"></script>
+  <script src="../sound.js"></script>
+  <script src="../breaker.js"></script>
+  <script>
+  // Lightweight Game Page Manager
+  (function(){
+    const canvas = document.getElementById('game-canvas');
+    const menuEl = document.getElementById('gp-menu');
+    const hudEl = document.getElementById('gp-hud');
+    const pauseEl = document.getElementById('gp-pause');
+    const overEl = document.getElementById('gp-over');
+    const scoreEl = document.getElementById('gp-score');
+    const finalEl = document.getElementById('gp-final');
+    const bestEl = document.getElementById('gp-best-msg');
+    let game = null, loopId = null, bestScore = parseInt(localStorage.getItem('nrg_breaker_best') || '0');
+
+    function startGame() {
+      menuEl.style.display = 'none';
+      overEl.style.display = 'none';
+      pauseEl.style.display = 'none';
+      hudEl.style.display = 'flex';
+      scoreEl.textContent = '0';
+      if (window.sound) { window.sound.init(); window.sound.startBGM(); }
+      if (loopId) cancelAnimationFrame(loopId);
+      game = new window.NeonBreaker(
+        'game-canvas',
+        function(finalScore) { gameOver(finalScore); },
+        function(score) { scoreEl.textContent = score; },
+        function() {}
+      );
+      game.active = true;
+      game.start();
+      tick();
+    }
+
+    function tick() {
+      if (!game || !game.active) return;
+      game.update();
+      game.draw();
+      loopId = requestAnimationFrame(tick);
+    }
+
+    function gameOver(finalScore) {
+      if (loopId) cancelAnimationFrame(loopId);
+      hudEl.style.display = 'none';
+      finalEl.textContent = finalScore;
+      if (finalScore > bestScore) {
+        bestScore = finalScore;
+        localStorage.setItem('nrg_breaker_best', bestScore);
+        bestEl.textContent = '🏆 NEW BEST SCORE!';
+      } else {
+        bestEl.textContent = 'Best: ' + bestScore;
+      }
+      overEl.style.display = 'flex';
+    }
+
+    document.getElementById('gp-play').addEventListener('click', startGame);
+    document.getElementById('gp-retry').addEventListener('click', startGame);
+    document.getElementById('gp-pause-btn').addEventListener('click', function() {
+      if (game && game.gameState === 'PLAYING') { game.gameState = 'PAUSED'; pauseEl.style.display = 'flex'; }
+    });
+    document.getElementById('gp-resume').addEventListener('click', function() {
+      if (game) { game.gameState = 'PLAYING'; pauseEl.style.display = 'none'; }
+    });
+    document.getElementById('gp-restart-p').addEventListener('click', function() { pauseEl.style.display = 'none'; startGame(); });
+  })();
+  </script>
+</body>
+</html>
