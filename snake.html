@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NEON SNAKE ROYALE // Cyberpunk Snake Battle</title>
+  <meta name="description" content="Neon Snake Royale: A futuristic cyberpunk snake game with progression, loot, skins, and daily missions. Free HTML5 browser game.">
+  <meta name="keywords" content="snake game online,neon snake game,snake royale,browser snake game,cyberpunk snake game,free snake game,mobile snake game">
+  <meta property="og:title" content="Neon Snake Royale — Cyberpunk Snake Battle">
+  <meta property="og:description" content="Grow. Survive. Dominate. The ultimate neon snake experience.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="snake.css">
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud" class="hud hidden">
+    <div class="hud-row">
+      <div class="hud-left">
+        <div class="hud-box"><span class="hud-lbl">SCORE</span><span id="h-score">0</span></div>
+        <div class="hud-box"><span class="hud-lbl">LEN</span><span id="h-len">3</span></div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-box" id="h-timer-box" style="display:none"><i class="fas fa-clock"></i> <span id="h-timer">3:00</span></div>
+        <button class="hud-btn" id="btn-pause"><i class="fas fa-pause"></i></button>
+      </div>
+    </div>
+    <div class="hud-xp-row">
+      <span class="hud-xp-lbl" id="h-lvl">Lv 1</span>
+      <div class="hud-xp-track"><div class="hud-xp-fill" id="h-xp-fill"></div></div>
+    </div>
+    <div class="hud-power hidden" id="h-power"><span id="h-power-icon"></span><span id="h-power-name"></span><div class="hud-power-bar"><div class="hud-power-fill" id="h-power-fill"></div></div></div>
+  </div>
+
+  <!-- ===== MAIN MENU ===== -->
+  <div id="menu-screen" class="overlay">
+    <div class="menu-wrap">
+      <h1 class="title gc">NEON SNAKE<span class="gp">ROYALE</span></h1>
+      <p class="subtitle">Grow · Survive · Dominate</p>
+
+      <div class="tab-content" id="tp-play" data-tab="play">
+        <div class="mode-grid">
+          <button class="mode-btn mode-active" data-mode="endless"><i class="fas fa-infinity"></i> Endless</button>
+          <button class="mode-btn" data-mode="timed"><i class="fas fa-stopwatch"></i> Time Attack</button>
+          <button class="mode-btn" data-mode="survival"><i class="fas fa-compress-arrows-alt"></i> Survival</button>
+          <button class="mode-btn" data-mode="challenge"><i class="fas fa-bullseye"></i> Challenge</button>
+        </div>
+        <button class="btn-play" id="btn-start"><i class="fas fa-play"></i> PLAY</button>
+        <div class="rec-grid" id="rec-grid">
+          <div class="rec"><span>Best Score</span><span id="r-score">0</span></div>
+          <div class="rec"><span>Best Length</span><span id="r-len">0</span></div>
+          <div class="rec"><span>Total Orbs</span><span id="r-orbs">0</span></div>
+          <div class="rec"><span>Prestige</span><span id="r-prestige">0</span></div>
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="tp-missions" data-tab="missions">
+        <h3 class="tab-hd gc">Daily Missions</h3>
+        <div id="mission-list" class="mission-list"></div>
+      </div>
+
+      <div class="tab-content hidden" id="tp-achieve" data-tab="achieve">
+        <h3 class="tab-hd gc">Achievements</h3>
+        <div id="ach-list" class="ach-list"></div>
+      </div>
+
+      <div class="tab-content hidden" id="tp-skins" data-tab="skins">
+        <h3 class="tab-hd gc">Skins & Trails</h3>
+        <h4 class="sub-hd">Snake Skins</h4>
+        <div id="skin-list" class="skin-grid"></div>
+        <h4 class="sub-hd">Trails</h4>
+        <div id="trail-list" class="skin-grid"></div>
+      </div>
+
+      <div class="tab-content hidden" id="tp-loot" data-tab="loot">
+        <h3 class="tab-hd gc">Loot Boxes</h3>
+        <div class="loot-count">You have <span id="loot-count" class="gc">0</span> boxes</div>
+        <button class="btn-glow" id="btn-open-loot" disabled><i class="fas fa-box-open"></i> OPEN</button>
+        <div id="loot-result" class="loot-result hidden"></div>
+        <div class="credits-row"><i class="fas fa-coins"></i> Credits: <span id="menu-credits" class="gc">0</span></div>
+      </div>
+
+      <div class="tab-content hidden" id="tp-settings" data-tab="settings">
+        <h3 class="tab-hd gc">Settings</h3>
+        <div class="setting-row"><span>Sound</span><button id="btn-snd" class="set-btn"><i class="fas fa-volume-up"></i></button></div>
+        <div class="setting-row"><span>Fullscreen</span><button id="btn-fs" class="set-btn"><i class="fas fa-expand"></i></button></div>
+        <div class="setting-row"><span>Prestige</span><button id="btn-prestige" class="set-btn prestige-btn" disabled><i class="fas fa-crown"></i></button></div>
+        <div class="setting-row"><span>Reset All</span><button id="btn-reset" class="set-btn danger"><i class="fas fa-trash"></i></button></div>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Arcade</a>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab-btn tab-active" data-tab="play"><i class="fas fa-play"></i><span>Play</span></button>
+        <button class="tab-btn" data-tab="missions"><i class="fas fa-calendar-check"></i><span>Missions</span></button>
+        <button class="tab-btn" data-tab="achieve"><i class="fas fa-trophy"></i><span>Awards</span></button>
+        <button class="tab-btn" data-tab="skins"><i class="fas fa-palette"></i><span>Skins</span></button>
+        <button class="tab-btn" data-tab="loot"><i class="fas fa-box-open"></i><span>Loot</span></button>
+        <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAUSE ===== -->
+  <div id="pause-screen" class="overlay hidden">
+    <div class="modal glass"><h2 class="gc">PAUSED</h2>
+      <button class="btn-glow" id="btn-resume">RESUME</button>
+      <button class="btn-glow btn-sec" id="btn-restart-p">RESTART</button>
+      <button class="btn-glow btn-sec" id="btn-menu-p">MENU</button>
+    </div>
+  </div>
+
+  <!-- ===== GAME OVER ===== -->
+  <div id="go-screen" class="overlay hidden">
+    <div class="modal glass go-modal">
+      <h2 class="gp">GAME OVER</h2>
+      <div class="go-stats" id="go-stats"></div>
+      <div class="go-rewards" id="go-rewards"></div>
+      <p class="go-best" id="go-best"></p>
+      <div class="go-btns">
+        <button class="btn-glow" id="btn-retry"><i class="fas fa-redo"></i> RETRY</button>
+        <button class="btn-glow btn-sec" id="btn-share"><i class="fas fa-share-alt"></i></button>
+        <button class="btn-glow btn-sec" id="btn-menu-go">MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast"><span id="t-icon">🏆</span><div class="toast-body"><div class="toast-lbl">ACHIEVEMENT</div><div id="t-name" class="toast-name">Name</div></div></div>
+
+  <canvas id="share-canvas" width="600" height="340" style="display:none"></canvas>
+  <script src="snake.js"></script>
+</body>
+</html>

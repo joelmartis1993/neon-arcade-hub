@@ -64,6 +64,9 @@ class NeonBreaker {
 
     this.screenShake = 0;
     this.flashDuration = 0;
+    
+    // Double-tap tracking for mobile laser fire
+    this.lastTapTime = 0;
   }
 
   spawnBall(x, y, vx, vy) {
@@ -109,16 +112,23 @@ class NeonBreaker {
     }
   }
 
+  // Helper: translate screen coordinates to base canvas coordinates
+  screenToCanvas(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.baseWidth / rect.width;
+    const scaleY = this.baseHeight / rect.height;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  }
+
   initInput() {
-    // Mouse movement inside canvas
+    // --- Mouse movement inside canvas ---
     this.canvas.addEventListener('mousemove', (e) => {
       if (!this.active || this.gameState !== 'PLAYING') return;
-      const rect = this.canvas.getBoundingClientRect();
-      // Translate screen coordinates to base canvas math coordinates
-      const scaleX = this.baseWidth / rect.width;
-      const relativeX = (e.clientX - rect.left) * scaleX;
-      
-      this.paddle.x = relativeX - this.paddle.width / 2;
+      const coords = this.screenToCanvas(e.clientX, e.clientY);
+      this.paddle.x = coords.x - this.paddle.width / 2;
       this.constrainPaddle();
     });
 
@@ -130,7 +140,7 @@ class NeonBreaker {
       }
     });
 
-    // Keyboard inputs fallback
+    // --- Keyboard inputs fallback ---
     window.addEventListener('keydown', (e) => {
       if (!this.active || this.gameState !== 'PLAYING') return;
       if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
@@ -151,26 +161,33 @@ class NeonBreaker {
       }
     });
 
-    // Touch controls support for mobile
+    // --- Touch controls for mobile ---
     this.canvas.addEventListener('touchmove', (e) => {
       if (!this.active || this.gameState !== 'PLAYING') return;
       e.preventDefault();
-      const rect = this.canvas.getBoundingClientRect();
-      const scaleX = this.baseWidth / rect.width;
       const touch = e.touches[0];
-      const relativeX = (touch.clientX - rect.left) * scaleX;
-      
-      this.paddle.x = relativeX - this.paddle.width / 2;
+      const coords = this.screenToCanvas(touch.clientX, touch.clientY);
+      this.paddle.x = coords.x - this.paddle.width / 2;
       this.constrainPaddle();
     }, { passive: false });
 
-    // Touch tap to fire lasers
+    // Touch tap + double-tap for lasers
     this.canvas.addEventListener('touchstart', (e) => {
       if (!this.active || this.gameState !== 'PLAYING') return;
-      if (this.paddle.laserActive > 0) {
-        e.preventDefault();
+      e.preventDefault();
+      
+      // Move paddle to touch position immediately
+      const touch = e.touches[0];
+      const coords = this.screenToCanvas(touch.clientX, touch.clientY);
+      this.paddle.x = coords.x - this.paddle.width / 2;
+      this.constrainPaddle();
+      
+      // Double-tap detection for laser fire
+      const now = Date.now();
+      if (now - this.lastTapTime < 350 && this.paddle.laserActive > 0) {
         this.fireLasers();
       }
+      this.lastTapTime = now;
     }, { passive: false });
   }
 
@@ -189,6 +206,7 @@ class NeonBreaker {
     
     this.paddle.laserTimer = 18; // cooldown frame duration
     if (window.sound) window.sound.playLaser();
+    if (window.Responsive) Responsive.vibrate(8);
     this.screenShake = Math.max(this.screenShake, 3);
   }
 
@@ -237,6 +255,7 @@ class NeonBreaker {
 
   activatePowerup(type) {
     if (window.sound) window.sound.playPowerup();
+    if (window.Responsive) Responsive.vibrate(12);
     
     switch(type) {
       case 'multi':
@@ -534,6 +553,7 @@ class NeonBreaker {
     this.gameState = 'GAMEOVER';
     this.screenShake = 12;
     if (window.sound) window.sound.playDamage();
+    if (window.Responsive) Responsive.vibrate(15);
     
     setTimeout(() => {
       this.onGameOver(this.score);

@@ -85,14 +85,18 @@ class CosmicMerge {
     this.nextCoreTier = this.getRandomSpawnTier();
   }
 
-  initInput() {
-    const getChamberCoords = (clientX, clientY) => {
-      const rect = this.canvas.getBoundingClientRect();
-      const scaleX = this.baseWidth / rect.width;
-      const relativeX = (clientX - rect.left) * scaleX;
-      return relativeX;
+  // Helper: translate screen coordinates to base canvas coordinates
+  screenToCanvas(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.baseWidth / rect.width;
+    const scaleY = this.baseHeight / rect.height;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
     };
+  }
 
+  initInput() {
     const handleMove = (x) => {
       if (!this.active || this.gameState !== 'PLAYING' || !this.currentCore || this.currentCore.dropped) return;
       
@@ -112,6 +116,7 @@ class CosmicMerge {
       
       this.dropCooldown = 45; // cooldown frames
       if (window.sound) window.sound.playLaser();
+      if (window.Responsive) Responsive.vibrate(8);
       
       setTimeout(() => {
         if (this.gameState === 'PLAYING') {
@@ -120,23 +125,36 @@ class CosmicMerge {
       }, 600);
     };
 
-    // Mouse Listeners
+    // --- Mouse Listeners ---
     this.canvas.addEventListener('mousemove', (e) => {
-      handleMove(getChamberCoords(e.clientX, e.clientY));
+      const coords = this.screenToCanvas(e.clientX, e.clientY);
+      handleMove(coords.x);
     });
 
     this.canvas.addEventListener('mousedown', (e) => {
       handleDrop();
     });
 
-    // Touch Listeners (drag & release to drop)
+    // --- Touch Listeners ---
+    // touchstart: position the core immediately (fixes first-touch dead zone)
+    this.canvas.addEventListener('touchstart', (e) => {
+      if (!this.active || this.gameState !== 'PLAYING') return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const coords = this.screenToCanvas(touch.clientX, touch.clientY);
+      handleMove(coords.x);
+    }, { passive: false });
+
+    // touchmove: drag to reposition before dropping
     this.canvas.addEventListener('touchmove', (e) => {
       if (!this.active || this.gameState !== 'PLAYING') return;
       e.preventDefault();
       const touch = e.touches[0];
-      handleMove(getChamberCoords(touch.clientX, touch.clientY));
+      const coords = this.screenToCanvas(touch.clientX, touch.clientY);
+      handleMove(coords.x);
     }, { passive: false });
 
+    // touchend: drop the core
     this.canvas.addEventListener('touchend', (e) => {
       if (!this.active || this.gameState !== 'PLAYING') return;
       e.preventDefault();
@@ -317,6 +335,7 @@ class CosmicMerge {
     this.cores.splice(secondIdx, 1);
 
     if (window.sound) window.sound.playMerge();
+    if (window.Responsive) Responsive.vibrate(12);
     this.screenShake = 6;
 
     // Check tier overflow
@@ -362,6 +381,7 @@ class CosmicMerge {
     this.screenShake = 15;
     this.flashDuration = 0.5;
     if (window.sound) window.sound.playDamage();
+    if (window.Responsive) Responsive.vibrate(15);
     
     // Dissolve all cores into particles
     this.cores.forEach(c => {

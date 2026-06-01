@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NEON DASH // Endless Cyberpunk Runner</title>
+  <meta name="description" content="Neon Dash: A highly addictive endless runner set in a cyberpunk neon city. Jump, slide, dash and survive. Free HTML5 browser game.">
+  <meta name="keywords" content="neon dash game, endless runner game, cyberpunk runner, free online runner, browser running game, neon arcade game">
+  <meta property="og:title" content="Neon Dash — Endless Cyberpunk Runner">
+  <meta property="og:description" content="How far can you run? Survive the neon void in this addictive cyberpunk runner.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="dash.css">
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud" class="hud hidden">
+    <div class="hud-row">
+      <div class="hud-left">
+        <div class="hud-stat-box"><span class="hud-label">SCORE</span><span class="hud-val" id="hud-score">0</span></div>
+      </div>
+      <div class="hud-center">
+        <div class="hud-powerup hidden" id="hud-powerup"><span id="hud-powerup-icon"></span><div class="hud-powerup-bar"><div class="hud-powerup-fill" id="hud-powerup-fill"></div></div></div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-stat-box"><i class="fas fa-gem"></i> <span id="hud-crystals">0</span></div>
+        <button class="hud-btn" id="btn-pause" aria-label="Pause"><i class="fas fa-pause"></i></button>
+      </div>
+    </div>
+    <div class="hud-combo hidden" id="hud-combo">x<span id="hud-combo-val">2</span> COMBO</div>
+  </div>
+
+  <!-- ===== MAIN MENU ===== -->
+  <div id="menu-screen" class="overlay-screen">
+    <div class="menu-wrap">
+      <h1 class="menu-title glow-cyan">NEON<span class="glow-pink">DASH</span></h1>
+      <p class="menu-sub">Endless Cyberpunk Runner</p>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="tab-play" data-tab="play">
+        <div class="streak-bar" id="streak-bar"><i class="fas fa-fire"></i> <span id="streak-val">0</span> Day Streak</div>
+        <button class="btn-play" id="btn-start"><i class="fas fa-play"></i> RUN</button>
+        <button class="btn-mode" id="btn-daily"><i class="fas fa-calendar-day"></i> Daily Challenge</button>
+        <div class="menu-records" id="menu-records">
+          <div class="rec"><span>Best Score</span><span id="rec-score">0</span></div>
+          <div class="rec"><span>Best Distance</span><span id="rec-dist">0m</span></div>
+          <div class="rec"><span>Total Crystals</span><span id="rec-crystals">0</span></div>
+          <div class="rec"><span>Games Played</span><span id="rec-games">0</span></div>
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="tab-challenges" data-tab="challenges">
+        <h3 class="tab-title glow-cyan">Daily Challenges</h3>
+        <div id="daily-list" class="daily-list"></div>
+      </div>
+
+      <div class="tab-content hidden" id="tab-achievements" data-tab="achievements">
+        <h3 class="tab-title glow-cyan">Achievements</h3>
+        <div id="ach-list" class="ach-list"></div>
+      </div>
+
+      <div class="tab-content hidden" id="tab-skins" data-tab="skins">
+        <h3 class="tab-title glow-cyan">Runner Skins</h3>
+        <div class="skin-progress" id="skin-progress-bar"><div class="skin-progress-fill" id="skin-progress-fill"></div></div>
+        <p class="skin-progress-text" id="skin-progress-text"></p>
+        <div id="skin-list" class="skin-list"></div>
+      </div>
+
+      <div class="tab-content hidden" id="tab-settings" data-tab="settings">
+        <h3 class="tab-title glow-cyan">Settings</h3>
+        <div class="setting-row"><span>Sound</span><button id="btn-sound" class="setting-btn"><i class="fas fa-volume-up"></i></button></div>
+        <div class="setting-row"><span>Fullscreen</span><button id="btn-fullscreen" class="setting-btn"><i class="fas fa-expand"></i></button></div>
+        <div class="setting-row"><span>Reset Progress</span><button id="btn-reset" class="setting-btn danger"><i class="fas fa-trash"></i></button></div>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Arcade</a>
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <button class="tab-btn tab-active" data-tab="play"><i class="fas fa-play"></i><span>Play</span></button>
+        <button class="tab-btn" data-tab="challenges"><i class="fas fa-calendar-check"></i><span>Daily</span></button>
+        <button class="tab-btn" data-tab="achievements"><i class="fas fa-trophy"></i><span>Awards</span></button>
+        <button class="tab-btn" data-tab="skins"><i class="fas fa-palette"></i><span>Skins</span></button>
+        <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAUSE ===== -->
+  <div id="pause-screen" class="overlay-screen hidden">
+    <div class="modal glass-panel">
+      <h2 class="glow-cyan">PAUSED</h2>
+      <button class="btn-glow" id="btn-resume">RESUME</button>
+      <button class="btn-glow btn-sec" id="btn-restart-pause">RESTART</button>
+      <button class="btn-glow btn-sec" id="btn-menu-pause">MENU</button>
+    </div>
+  </div>
+
+  <!-- ===== GAME OVER ===== -->
+  <div id="gameover-screen" class="overlay-screen hidden">
+    <div class="modal glass-panel gameover-modal">
+      <h2 class="glow-pink">CRASHED</h2>
+      <div class="go-stats" id="go-stats"></div>
+      <p class="go-best" id="go-best"></p>
+      <div class="go-btns">
+        <button class="btn-glow" id="btn-retry"><i class="fas fa-redo"></i> RETRY</button>
+        <button class="btn-glow btn-sec" id="btn-share"><i class="fas fa-share-alt"></i> SHARE</button>
+        <button class="btn-glow btn-sec" id="btn-menu-over">MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ACHIEVEMENT TOAST ===== -->
+  <div id="toast" class="toast"><span id="toast-icon">🏆</span><div class="toast-body"><div class="toast-label">ACHIEVEMENT</div><div id="toast-name" class="toast-name">Name</div></div></div>
+
+  <!-- ===== SHARE CANVAS (hidden) ===== -->
+  <canvas id="share-canvas" width="600" height="340" style="display:none;"></canvas>
+
+  <script src="dash.js"></script>
+</body>
+</html>
