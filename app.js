@@ -23,9 +23,11 @@ class ArcadeManager {
     this.activeGame = null;
     this.activeGameId = null; // 'runner', 'breaker', 'merge'
     this.gameLoopId = null;
+    this.particlesRunning = false;
     
     this.loadStats();
     this.initUI();
+    this.initResponsive();
     this.initParticles();
   }
 
@@ -46,6 +48,43 @@ class ArcadeManager {
     this.updateDashboardUI();
   }
 
+  // ============================================
+  // RESPONSIVE INITIALIZATION
+  // ============================================
+  initResponsive() {
+    if (window.Responsive) {
+      Responsive.init();
+
+      // Handle orientation changes — re-fit canvas
+      Responsive.onOrientationChange(() => {
+        this.handleResize();
+      });
+
+      // Fullscreen change handler — update icon
+      Responsive.onFullscreenChange(() => {
+        const icon = document.querySelector('#btn-fullscreen i');
+        const mobIcon = document.querySelector('#mob-fullscreen i');
+        if (Responsive.isFullscreen()) {
+          if (icon) icon.className = 'fas fa-compress';
+          if (mobIcon) mobIcon.className = 'fas fa-compress';
+        } else {
+          if (icon) icon.className = 'fas fa-expand';
+          if (mobIcon) mobIcon.className = 'fas fa-expand';
+        }
+      });
+    }
+  }
+
+  handleResize() {
+    const canvas = document.getElementById('game-canvas');
+    if (canvas && this.activeGame) {
+      Responsive.fitCanvasToContainer(canvas);
+    }
+  }
+
+  // ============================================
+  // UI INITIALIZATION
+  // ============================================
   initUI() {
     // Volume adjustments
     const volSlider = document.getElementById('volume-slider');
@@ -66,25 +105,37 @@ class ArcadeManager {
         }
       });
       
-      volIcon.addEventListener('click', () => {
+      const toggleMute = () => {
         if (volSlider.value > 0) {
+          volSlider.dataset.prevVol = volSlider.value;
           volSlider.value = 0;
           volIcon.className = 'fas fa-volume-mute';
           if (window.sound) window.sound.setVolume('master', 0);
         } else {
-          volSlider.value = 0.5;
+          volSlider.value = volSlider.dataset.prevVol || 0.5;
           volIcon.className = 'fas fa-volume-down';
-          if (window.sound) window.sound.setVolume('master', 0.5);
+          if (window.sound) window.sound.setVolume('master', parseFloat(volSlider.value));
         }
+      };
+      
+      volIcon.addEventListener('click', toggleMute);
+      volIcon.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMute(); }
       });
     }
 
-    // Card Clicks - Game Select
+    // Card Clicks - Game Select (click + keyboard Enter)
     const cards = document.querySelectorAll('.game-card');
     cards.forEach(card => {
       card.addEventListener('click', () => {
         const gameId = card.getAttribute('data-game');
         this.launchGame(gameId);
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.click();
+        }
       });
     });
 
@@ -95,43 +146,95 @@ class ArcadeManager {
     const btnResume = document.getElementById('btn-resume');
     const btnOverHome = document.getElementById('btn-over-home');
     const btnOverRestart = document.getElementById('btn-over-restart');
+    const btnOverHomeSidebar = document.getElementById('btn-over-home-sidebar');
+    const btnFullscreen = document.getElementById('btn-fullscreen');
 
     if (btnHome) btnHome.addEventListener('click', () => this.exitToDashboard());
     if (btnOverHome) btnOverHome.addEventListener('click', () => this.exitToDashboard());
+    if (btnOverHomeSidebar) btnOverHomeSidebar.addEventListener('click', () => this.exitToDashboard());
     
     if (btnRestart) btnRestart.addEventListener('click', () => this.restartGame());
     if (btnOverRestart) btnOverRestart.addEventListener('click', () => this.restartGame());
     
     if (btnPause) {
-      btnPause.addEventListener('click', () => {
-        if (this.activeGame && this.activeGame.gameState === 'PLAYING') {
-          this.activeGame.gameState = 'PAUSED';
-          document.getElementById('pause-overlay').style.display = 'flex';
-        }
-      });
+      btnPause.addEventListener('click', () => this.togglePause());
     }
     
     if (btnResume) {
-      btnResume.addEventListener('click', () => {
-        if (this.activeGame && this.activeGame.gameState === 'PAUSED') {
-          this.activeGame.gameState = 'PLAYING';
-          document.getElementById('pause-overlay').style.display = 'none';
-        }
+      btnResume.addEventListener('click', () => this.resumeGame());
+    }
+
+    if (btnFullscreen) {
+      btnFullscreen.addEventListener('click', () => this.toggleFullscreen());
+    }
+
+    // --- Mobile toolbar buttons ---
+    const mobPause = document.getElementById('mob-pause');
+    const mobFullscreen = document.getElementById('mob-fullscreen');
+    const mobJump = document.getElementById('mob-jump');
+    const mobSlide = document.getElementById('mob-slide');
+
+    if (mobPause) mobPause.addEventListener('click', () => this.togglePause());
+    if (mobFullscreen) mobFullscreen.addEventListener('click', () => this.toggleFullscreen());
+
+    // Runner touch buttons (wired in launchGame to pass to runner instance)
+    // We store references so game engines can use them
+    this.mobJumpBtn = mobJump;
+    this.mobSlideBtn = mobSlide;
+
+    // --- Sidebar toggle for mobile ---
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const gameplaySidebar = document.getElementById('gameplay-sidebar');
+    if (sidebarToggle && gameplaySidebar) {
+      sidebarToggle.addEventListener('click', () => {
+        gameplaySidebar.classList.toggle('sidebar-open');
+        const isOpen = gameplaySidebar.classList.contains('sidebar-open');
+        sidebarToggle.innerHTML = isOpen
+          ? '<i class="fas fa-info-circle"></i> INSTRUCTIONS ▲'
+          : '<i class="fas fa-info-circle"></i> INSTRUCTIONS ▼';
       });
     }
 
     this.updateDashboardUI();
   }
 
+  togglePause() {
+    if (!this.activeGame) return;
+    if (this.activeGame.gameState === 'PLAYING') {
+      this.activeGame.gameState = 'PAUSED';
+      document.getElementById('pause-overlay').style.display = 'flex';
+    } else if (this.activeGame.gameState === 'PAUSED') {
+      this.resumeGame();
+    }
+  }
+
+  resumeGame() {
+    if (this.activeGame && this.activeGame.gameState === 'PAUSED') {
+      this.activeGame.gameState = 'PLAYING';
+      document.getElementById('pause-overlay').style.display = 'none';
+    }
+  }
+
+  toggleFullscreen() {
+    if (window.Responsive) {
+      Responsive.toggleFullscreen(document.documentElement);
+    }
+  }
+
   updateDashboardUI() {
     // Populate stats
-    document.getElementById('stat-games-played').innerText = this.stats.gamesPlayed;
-    document.getElementById('stat-total-points').innerText = this.stats.totalPoints;
+    const gp = document.getElementById('stat-games-played');
+    const tp = document.getElementById('stat-total-points');
+    if (gp) gp.innerText = this.stats.gamesPlayed;
+    if (tp) tp.innerText = this.stats.totalPoints;
     
     // High Scores on selection cards
-    document.getElementById('runner-card-high').innerText = this.stats.runnerHigh;
-    document.getElementById('breaker-card-high').innerText = this.stats.breakerHigh;
-    document.getElementById('merge-card-high').innerText = this.stats.mergeHigh;
+    const rh = document.getElementById('runner-card-high');
+    const bh = document.getElementById('breaker-card-high');
+    const mh = document.getElementById('merge-card-high');
+    if (rh) rh.innerText = this.stats.runnerHigh;
+    if (bh) bh.innerText = this.stats.breakerHigh;
+    if (mh) mh.innerText = this.stats.mergeHigh;
 
     // Populates achievements sidebar
     const grid = document.getElementById('achievements-list-grid');
@@ -144,6 +247,7 @@ class ArcadeManager {
         
         const row = document.createElement('div');
         row.className = `achievement-row ${unlocked ? 'unlocked' : ''}`;
+        row.setAttribute('role', 'listitem');
         
         row.innerHTML = `
           <div class="achievement-icon" style="color: ${unlocked ? 'var(--neon-yellow)' : 'var(--text-secondary)'}">${ach.icon}</div>
@@ -158,6 +262,9 @@ class ArcadeManager {
     }
   }
 
+  // ============================================
+  // BACKGROUND PARTICLES (performance-gated)
+  // ============================================
   initParticles() {
     const canvas = document.getElementById('bg-particles');
     if (!canvas) return;
@@ -166,10 +273,15 @@ class ArcadeManager {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
+    // Reduce particle count on mobile / low-perf devices
+    const tier = window.Responsive ? Responsive.getPerformanceTier() : 'high';
+    const isMob = window.Responsive ? Responsive.isMobile() : false;
+    const particleCount = isMob ? 12 : (tier === 'low' ? 15 : 35);
+    
     const particles = [];
     const colorOptions = ['rgba(255, 0, 127, 0.15)', 'rgba(0, 240, 255, 0.15)', 'rgba(162, 0, 255, 0.15)'];
     
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -180,7 +292,15 @@ class ArcadeManager {
       });
     }
     
+    this.particlesRunning = true;
+    
     const animate = () => {
+      if (!this.particlesRunning) {
+        // Pause particles during gameplay to save GPU
+        requestAnimationFrame(animate);
+        return;
+      }
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       particles.forEach(p => {
@@ -208,12 +328,21 @@ class ArcadeManager {
     animate();
   }
 
+  // ============================================
+  // GAME LAUNCHING
+  // ============================================
   launchGame(gameId) {
     if (this.gameLoopId) {
       cancelAnimationFrame(this.gameLoopId);
     }
     
     this.activeGameId = gameId;
+    
+    // Pause background particles during gameplay
+    this.particlesRunning = false;
+    
+    // Add body class for mobile spacing
+    document.body.classList.add('game-active');
     
     // UI Panels toggle
     document.getElementById('dashboard-view').style.display = 'none';
@@ -226,10 +355,28 @@ class ArcadeManager {
     // Reset HUD Score
     document.getElementById('hud-score-value').innerText = '0';
 
-    // Show mobile touch buttons if on small screens or simulation
-    const touchCtrl = document.getElementById('touch-controls-layout');
-    if (touchCtrl) {
-      touchCtrl.style.display = gameId === 'runner' ? 'flex' : 'none';
+    // Close sidebar on mobile
+    const gameplaySidebar = document.getElementById('gameplay-sidebar');
+    if (gameplaySidebar) gameplaySidebar.classList.remove('sidebar-open');
+
+    // --- Configure mobile toolbar ---
+    const mobileToolbar = document.getElementById('mobile-toolbar');
+    const mobJump = document.getElementById('mob-jump');
+    const mobSlide = document.getElementById('mob-slide');
+    const isTouchDevice = window.Responsive ? Responsive.isTouchDevice() : false;
+    
+    if (mobileToolbar && isTouchDevice) {
+      mobileToolbar.classList.add('active');
+      
+      if (gameId === 'runner') {
+        // Show jump + slide buttons
+        if (mobJump) mobJump.style.display = 'flex';
+        if (mobSlide) mobSlide.style.display = 'flex';
+      } else {
+        // Breaker & Merge use canvas touch — hide jump/slide
+        if (mobJump) mobJump.style.display = 'none';
+        if (mobSlide) mobSlide.style.display = 'none';
+      }
     }
 
     // Set side instruction info panel
@@ -252,10 +399,10 @@ class ArcadeManager {
         <h4>HOW TO PLAY:</h4>
         <p>Race forward in the digital void! Jump spikes and slide under high beams.</p>
         <div style="margin-top: 10px;">
-          <span class="instruction-key">SPACEBAR</span> or <span class="instruction-key">▲ Key</span> : Jump<br>
-          <span class="instruction-key">▼ Key</span> : Slide/Duck
+          <span class="instruction-key">SPACEBAR</span> or <span class="instruction-key">▲</span> : Jump<br>
+          <span class="instruction-key">▼</span> : Slide/Duck
         </div>
-        <p style="margin-top: 8px; font-size: 0.8rem; color: var(--neon-pink);">* Touch Controls active at the bottom on mobile devices.</p>
+        <p style="margin-top: 8px; font-size: 0.8rem; color: var(--neon-pink);">On mobile: Use bottom toolbar or swipe up/down on canvas.</p>
       `;
       
       this.activeGame = new window.CyberRunner(
@@ -275,9 +422,9 @@ class ArcadeManager {
         <p>Move the paddle left/right. Catch power-ups. Break all glowing bricks.</p>
         <div style="margin-top: 10px;">
           <span class="instruction-key">MOUSE</span> / <span class="instruction-key">TOUCH</span> : Move Paddle<br>
-          <span class="instruction-key">CLICK</span> / <span class="instruction-key">SPACEBAR</span> : Shoot Lasers (when active)
+          <span class="instruction-key">CLICK</span> / <span class="instruction-key">SPACE</span> : Shoot Lasers
         </div>
-        <p style="margin-top: 8px; font-size: 0.8rem; color: var(--neon-cyan);">Powerups: [M] Multi-Ball, [L] Laser Blasters, [S] Boundary Shield, [T] Slow-mo, [E] Expand.</p>
+        <p style="margin-top: 8px; font-size: 0.8rem; color: var(--neon-cyan);">On mobile: Drag finger on canvas to move paddle. Double-tap to fire lasers.</p>
       `;
       
       this.activeGame = new window.NeonBreaker(
@@ -294,12 +441,12 @@ class ArcadeManager {
       infoIcon.style.textShadow = '0 0 10px var(--neon-purple)';
       infoInstructions.innerHTML = `
         <h4>HOW TO PLAY:</h4>
-        <p>Drop glowing cosmic cores into the chamber. Two identical cores merge to upgrade. Highly addictive!</p>
+        <p>Drop glowing cosmic cores into the chamber. Two identical cores merge to upgrade!</p>
         <div style="margin-top: 10px;">
-          <span class="instruction-key">MOUSE MOVE</span> / <span class="instruction-key">TOUCH</span> : Position Core<br>
-          <span class="instruction-key">CLICK</span> / <span class="instruction-key">RELEASE</span> : Drop Core
+          <span class="instruction-key">MOUSE</span> / <span class="instruction-key">TOUCH</span> : Position Core<br>
+          <span class="instruction-key">CLICK</span> / <span class="instruction-key">TAP</span> : Drop Core
         </div>
-        <p style="margin-top: 8px; font-size: 0.8rem; color: var(--neon-purple);">* Don't let cores pile up past the dashed red line for 3 seconds!</p>
+        <p style="margin-top: 8px; font-size: 0.8rem; color: var(--neon-purple);">Don't let cores pile past the red danger line!</p>
       `;
       
       this.activeGame = new window.CosmicMerge(
@@ -313,6 +460,11 @@ class ArcadeManager {
     // Start active game state
     this.activeGame.active = true;
     this.activeGame.start();
+    
+    // Fit canvas after a brief delay to ensure layout is computed
+    requestAnimationFrame(() => {
+      this.handleResize();
+    });
     
     // Start central animation tick loop
     this.tick();
@@ -328,13 +480,17 @@ class ArcadeManager {
   }
 
   updateHUDScore(score) {
-    document.getElementById('hud-score-value').innerText = score;
+    const el = document.getElementById('hud-score-value');
+    if (el) el.innerText = score;
   }
 
   gameOver(finalScore) {
     if (this.gameLoopId) {
       cancelAnimationFrame(this.gameLoopId);
     }
+    
+    // Vibration feedback
+    if (window.Responsive) Responsive.vibrate(30);
     
     // Store Stats
     this.stats.gamesPlayed++;
@@ -356,17 +512,22 @@ class ArcadeManager {
 
     // Show Game Over Overlay
     const overlay = document.getElementById('gameover-overlay');
-    document.getElementById('gameover-final-score').innerText = finalScore;
+    const scoreEl = document.getElementById('gameover-final-score');
+    if (scoreEl) scoreEl.innerText = finalScore;
     
     const banner = document.getElementById('gameover-banner-high');
     if (isNewHigh) {
-      banner.style.display = 'block';
-      banner.innerText = "🏆 NEW ARCADE RECORD! 🏆";
+      if (banner) {
+        banner.style.display = 'block';
+        banner.innerText = "🏆 NEW ARCADE RECORD! 🏆";
+      }
+      // Extra vibration for new high score
+      if (window.Responsive) Responsive.vibrate([30, 50, 30]);
     } else {
-      banner.style.display = 'none';
+      if (banner) banner.style.display = 'none';
     }
     
-    overlay.style.display = 'flex';
+    if (overlay) overlay.style.display = 'flex';
   }
 
   restartGame() {
@@ -387,9 +548,24 @@ class ArcadeManager {
     
     this.activeGameId = null;
     
+    // Resume background particles
+    this.particlesRunning = true;
+    
+    // Remove body class
+    document.body.classList.remove('game-active');
+    
     if (window.sound) {
       window.sound.stopBGM();
     }
+    
+    // Exit fullscreen if active
+    if (window.Responsive && Responsive.isFullscreen()) {
+      Responsive.exitFullscreen();
+    }
+    
+    // Hide mobile toolbar
+    const mobileToolbar = document.getElementById('mobile-toolbar');
+    if (mobileToolbar) mobileToolbar.classList.remove('active');
     
     // Views toggling
     document.getElementById('dashboard-view').style.display = 'grid';
@@ -407,18 +583,25 @@ class ArcadeManager {
     const ach = this.achievementsList[key];
     if (!ach) return;
 
+    // Vibration feedback
+    if (window.Responsive) Responsive.vibrate([10, 20, 10]);
+
     // Display beautiful slide-in toast
     const toast = document.getElementById('achievement-toast');
-    document.getElementById('toast-icon').innerText = ach.icon;
-    document.getElementById('toast-title').innerText = `🏆 ACHIEVEMENT UNLOCKED!`;
-    document.getElementById('toast-name').innerText = ach.title;
+    const toastIcon = document.getElementById('toast-icon');
+    const toastTitle = document.getElementById('toast-title');
+    const toastName = document.getElementById('toast-name');
+    
+    if (toastIcon) toastIcon.innerText = ach.icon;
+    if (toastTitle) toastTitle.innerText = `🏆 ACHIEVEMENT UNLOCKED!`;
+    if (toastName) toastName.innerText = ach.title;
 
-    toast.classList.add('active');
+    if (toast) toast.classList.add('active');
     
     if (window.sound) window.sound.playPowerup();
 
     setTimeout(() => {
-      toast.classList.remove('active');
+      if (toast) toast.classList.remove('active');
     }, 4000);
   }
 }

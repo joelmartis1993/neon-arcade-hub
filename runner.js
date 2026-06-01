@@ -6,7 +6,7 @@ class CyberRunner {
     this.onScoreUpdate = onScoreUpdate;
     this.triggerAchievement = triggerAchievement;
     
-    // Internal base resolution for math, responsive scaling handled in CSS
+    // Internal base resolution for math — CSS handles display scaling
     this.baseWidth = 960;
     this.baseHeight = 540;
     this.canvas.width = this.baseWidth;
@@ -81,6 +81,7 @@ class CyberRunner {
       }
     };
     
+    // --- Keyboard Controls (unchanged) ---
     window.addEventListener('keydown', (e) => {
       if (!this.active || this.gameState !== 'PLAYING') return;
       preventDefaults(e);
@@ -101,33 +102,76 @@ class CyberRunner {
       }
     });
     
-    // Touch controls listeners
-    const touchUp = document.getElementById('touch-up');
-    const touchDown = document.getElementById('touch-down');
+    // --- Mobile Toolbar Button Controls ---
+    const mobJump = document.getElementById('mob-jump');
+    const mobSlide = document.getElementById('mob-slide');
     
-    if (touchUp && touchDown) {
-      // Clear previous event listeners (by cloning or just overwriting handles if necessary)
-      touchUp.onclick = (e) => {
+    if (mobJump) {
+      mobJump.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         if (this.active && this.gameState === 'PLAYING') this.jump();
-      };
-      
+      });
+    }
+    
+    if (mobSlide) {
       let slideTimeout;
-      touchDown.onpointerdown = (e) => {
+      mobSlide.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         if (this.active && this.gameState === 'PLAYING') {
           this.slide(true);
-          // Auto release slide after 0.5s for touch-hold safety
           clearTimeout(slideTimeout);
           slideTimeout = setTimeout(() => this.slide(false), 500);
         }
-      };
+      });
       
-      touchDown.onpointerup = (e) => {
+      mobSlide.addEventListener('pointerup', (e) => {
         e.preventDefault();
         if (this.active && this.gameState === 'PLAYING') this.slide(false);
-      };
+      });
+      
+      mobSlide.addEventListener('pointercancel', (e) => {
+        if (this.active && this.gameState === 'PLAYING') this.slide(false);
+      });
     }
+    
+    // --- Canvas Swipe Gesture Support ---
+    let touchStartY = null;
+    let touchStartX = null;
+    
+    this.canvas.addEventListener('touchstart', (e) => {
+      if (!this.active || this.gameState !== 'PLAYING') return;
+      const touch = e.touches[0];
+      touchStartY = touch.clientY;
+      touchStartX = touch.clientX;
+    }, { passive: true });
+    
+    this.canvas.addEventListener('touchend', (e) => {
+      if (!this.active || this.gameState !== 'PLAYING') return;
+      if (touchStartY === null) return;
+      
+      const touch = e.changedTouches[0];
+      const deltaY = touchStartY - touch.clientY;
+      const deltaX = Math.abs(touchStartX - touch.clientX);
+      const absDeltaY = Math.abs(deltaY);
+      
+      // Minimum swipe distance threshold (30px) and must be more vertical than horizontal
+      if (absDeltaY > 30 && absDeltaY > deltaX) {
+        if (deltaY > 0) {
+          // Swiped UP → Jump
+          this.jump();
+        } else {
+          // Swiped DOWN → Slide (auto-release after 500ms)
+          this.slide(true);
+          setTimeout(() => this.slide(false), 500);
+        }
+      } else if (absDeltaY < 15 && deltaX < 15) {
+        // Tap (not a swipe) → Jump
+        this.jump();
+      }
+      
+      touchStartY = null;
+      touchStartX = null;
+    }, { passive: true });
   }
 
   jump() {
@@ -135,6 +179,7 @@ class CyberRunner {
       this.player.vy = this.player.jumpForce;
       this.player.isGrounded = false;
       if (window.sound) window.sound.playJump();
+      if (window.Responsive) Responsive.vibrate(10);
       
       // Spawn dust particles
       for (let i = 0; i < 8; i++) {
@@ -368,6 +413,7 @@ class CyberRunner {
     this.flashDuration = 0.5;
     this.gameState = 'GAMEOVER';
     if (window.sound) window.sound.playDamage();
+    if (window.Responsive) Responsive.vibrate(15);
     
     // Epic damage explosion
     for (let i = 0; i < 30; i++) {

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NEON SURVIVOR // Arcade Survival</title>
+  <meta name="description" content="Neon Survivor: An endless cyberpunk survival game. Move, dodge, upgrade, and survive waves of neon enemies. Free to play in your browser.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="survivor.css">
+</head>
+<body>
+
+  <!-- Main Game Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- ========== HUD OVERLAY ========== -->
+  <div id="hud" class="hud hidden">
+    <div class="hud-top-bar">
+      <div class="hud-left">
+        <div class="hud-health-wrap">
+          <div class="hud-health-bar">
+            <div class="hud-health-fill" id="hud-hp-fill"></div>
+          </div>
+          <span class="hud-health-text" id="hud-hp-text">100/100</span>
+        </div>
+        <div class="hud-xp-wrap">
+          <div class="hud-xp-bar">
+            <div class="hud-xp-fill" id="hud-xp-fill"></div>
+          </div>
+          <span class="hud-xp-text" id="hud-xp-text">Lv 1</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-stat"><i class="fas fa-crosshairs"></i> <span id="hud-kills">0</span></div>
+        <div class="hud-stat"><i class="fas fa-star"></i> <span id="hud-score">0</span></div>
+        <div class="hud-stat"><i class="fas fa-clock"></i> <span id="hud-time">0:00</span></div>
+      </div>
+    </div>
+    <div class="hud-controls">
+      <button id="btn-ingame-pause" class="hud-btn" aria-label="Pause"><i class="fas fa-pause"></i></button>
+    </div>
+    <!-- Minimap -->
+    <div class="hud-minimap">
+      <canvas id="minimap-canvas" width="120" height="120"></canvas>
+    </div>
+    <!-- Active Weapons Display -->
+    <div class="hud-weapons" id="hud-weapons"></div>
+  </div>
+
+  <!-- ========== VIRTUAL JOYSTICK ========== -->
+  <div id="joystick-zone" class="joystick-zone hidden">
+    <div id="joystick-base" class="joystick-base">
+      <div id="joystick-thumb" class="joystick-thumb"></div>
+    </div>
+  </div>
+
+  <!-- ========== MAIN MENU SCREEN ========== -->
+  <div id="menu-screen" class="overlay-screen">
+    <div class="menu-content glass-panel">
+      <h1 class="game-title neon-glow-cyan">NEON<br><span class="neon-glow-pink">SURVIVOR</span></h1>
+      <p class="menu-subtitle">Survive the neon void. Upgrade. Dominate.</p>
+
+      <div class="mode-select" id="mode-select">
+        <button class="mode-btn mode-active" data-mode="endless"><i class="fas fa-infinity"></i> ENDLESS</button>
+        <button class="mode-btn" data-mode="boss_rush"><i class="fas fa-skull"></i> BOSS RUSH</button>
+        <button class="mode-btn" data-mode="hardcore"><i class="fas fa-fire"></i> HARDCORE</button>
+        <button class="mode-btn" data-mode="daily"><i class="fas fa-calendar-day"></i> DAILY</button>
+      </div>
+
+      <button id="btn-play" class="btn-glow btn-play"><i class="fas fa-play"></i> ENGAGE</button>
+
+      <div class="menu-records" id="menu-records">
+        <div class="record-item"><span>Best Time</span><span id="rec-time">0:00</span></div>
+        <div class="record-item"><span>High Score</span><span id="rec-score">0</span></div>
+        <div class="record-item"><span>Best Level</span><span id="rec-level">0</span></div>
+        <div class="record-item"><span>Total Kills</span><span id="rec-kills">0</span></div>
+      </div>
+
+      <div class="menu-footer">
+        <button id="btn-sound-toggle" class="icon-btn" aria-label="Toggle Sound"><i class="fas fa-volume-up"></i></button>
+        <a href="index.html" class="icon-btn" aria-label="Back to Arcade"><i class="fas fa-home"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== LEVEL UP SCREEN ========== -->
+  <div id="levelup-screen" class="overlay-screen hidden">
+    <div class="levelup-content">
+      <h2 class="levelup-title neon-glow-cyan">LEVEL UP!</h2>
+      <p class="levelup-sub" id="levelup-level">Level 2</p>
+      <div class="upgrade-choices" id="upgrade-choices">
+        <!-- 3 upgrade cards injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAUSE SCREEN ========== -->
+  <div id="pause-screen" class="overlay-screen hidden">
+    <div class="pause-content glass-panel">
+      <h2 class="neon-glow-cyan">PAUSED</h2>
+      <div class="pause-stats" id="pause-stats"></div>
+      <div class="pause-buttons">
+        <button id="btn-resume" class="btn-glow">RESUME</button>
+        <button id="btn-restart-pause" class="btn-glow btn-secondary">RESTART</button>
+        <button id="btn-menu-pause" class="btn-glow btn-secondary">MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== GAME OVER SCREEN ========== -->
+  <div id="gameover-screen" class="overlay-screen hidden">
+    <div class="gameover-content glass-panel">
+      <h2 class="neon-glow-pink">SIMULATION<br>TERMINATED</h2>
+      <div class="gameover-stats" id="gameover-stats"></div>
+      <p class="gameover-best" id="gameover-best"></p>
+      <div class="gameover-buttons">
+        <button id="btn-retry" class="btn-glow">RETRY</button>
+        <button id="btn-menu-over" class="btn-glow btn-secondary">MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ACHIEVEMENT TOAST ========== -->
+  <div id="achievement-toast" class="achievement-toast" role="alert" aria-live="polite">
+    <div class="toast-icon" id="ach-icon">🏆</div>
+    <div class="toast-body">
+      <div class="toast-label">ACHIEVEMENT UNLOCKED</div>
+      <div class="toast-name" id="ach-name">Achievement</div>
+    </div>
+  </div>
+
+  <!-- ========== BOSS WARNING ========== -->
+  <div id="boss-warning" class="boss-warning hidden">
+    <span>⚠ WARNING: BOSS INCOMING ⚠</span>
+  </div>
+
+  <script src="survivor.js"></script>
+</body>
+</html>
