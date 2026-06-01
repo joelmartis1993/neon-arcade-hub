@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Neon Snake Royale — Free Online Snake Game with Progression | NeonRush Games</title>
+  <meta name="description" content="Play Neon Snake Royale free. Modern cyberpunk snake game with loot boxes, skins, prestige, daily missions. Grow bigger, survive longer.">
+  <meta name="keywords" content="snake game online, neon snake, snake royale, free snake game, modern snake game">
+  <link rel="canonical" href="https://neonrushgames.com/neon-snake-royale/">
+  <meta property="og:title" content="Neon Snake Royale — Free Online Snake Game with Progression">
+  <meta property="og:description" content="Play Neon Snake Royale free. Modern cyberpunk snake game with loot boxes, skins, prestige, daily missions. Grow bigger, survive longer.">
+  <meta property="og:url" content="https://neonrushgames.com/neon-snake-royale/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NeonRush Games">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Neon Snake Royale — Free Online Snake Game with Progression">
+  <meta name="twitter:description" content="Play Neon Snake Royale free. Modern cyberpunk snake game with loot boxes, skins, prestige, daily missions. Grow bigger, survive longer.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Neon Snake Royale",
+    "description": "Play Neon Snake Royale free. Modern cyberpunk snake game with loot boxes, skins, prestige, daily missions. Grow bigger, survive longer.",
+    "url": "https://neonrushgames.com/neon-snake-royale/",
+    "genre": ["Arcade", "Snake"],
+    "gamePlatform": "Web Browser",
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {"@type": "Organization", "name": "NeonRush Games", "url": "https://neonrushgames.com"}
+  }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../game-page.css">
+  <link rel="stylesheet" href="../snake.css">
+</head>
+<body style="margin:0;background:#050110;overflow-x:hidden">
+
+  <!-- Game Wrapper (contains all game DOM elements) -->
+  <div class="game-wrapper">
+
+    <canvas id="game-canvas"></canvas>
+
+    <!-- ===== HUD ===== -->
+    <div id="hud" class="hud hidden">
+      <div class="hud-row">
+        <div class="hud-left">
+          <div class="hud-box"><span class="hud-lbl">SCORE</span><span id="h-score">0</span></div>
+          <div class="hud-box"><span class="hud-lbl">LEN</span><span id="h-len">3</span></div>
+        </div>
+        <div class="hud-right">
+          <div class="hud-box" id="h-timer-box" style="display:none"><i class="fas fa-clock"></i> <span id="h-timer">3:00</span></div>
+          <button class="hud-btn" id="btn-pause"><i class="fas fa-pause"></i></button>
+        </div>
+      </div>
+      <div class="hud-xp-row">
+        <span class="hud-xp-lbl" id="h-lvl">Lv 1</span>
+        <div class="hud-xp-track"><div class="hud-xp-fill" id="h-xp-fill"></div></div>
+      </div>
+      <div class="hud-power hidden" id="h-power"><span id="h-power-icon"></span><span id="h-power-name"></span><div class="hud-power-bar"><div class="hud-power-fill" id="h-power-fill"></div></div></div>
+    </div>
+
+    <!-- ===== MAIN MENU ===== -->
+    <div id="menu-screen" class="overlay">
+      <div class="menu-wrap">
+        <h1 class="title gc">NEON SNAKE<span class="gp">ROYALE</span></h1>
+        <p class="subtitle">Grow · Survive · Dominate</p>
+
+        <div class="tab-content" id="tp-play" data-tab="play">
+          <div class="mode-grid">
+            <button class="mode-btn mode-active" data-mode="endless"><i class="fas fa-infinity"></i> Endless</button>
+            <button class="mode-btn" data-mode="timed"><i class="fas fa-stopwatch"></i> Time Attack</button>
+            <button class="mode-btn" data-mode="survival"><i class="fas fa-compress-arrows-alt"></i> Survival</button>
+            <button class="mode-btn" data-mode="challenge"><i class="fas fa-bullseye"></i> Challenge</button>
+          </div>
+          <button class="btn-play" id="btn-start"><i class="fas fa-play"></i> PLAY</button>
+          <div class="rec-grid" id="rec-grid">
+            <div class="rec"><span>Best Score</span><span id="r-score">0</span></div>
+            <div class="rec"><span>Best Length</span><span id="r-len">0</span></div>
+            <div class="rec"><span>Total Orbs</span><span id="r-orbs">0</span></div>
+            <div class="rec"><span>Prestige</span><span id="r-prestige">0</span></div>
+          </div>
+        </div>
+
+        <div class="tab-content hidden" id="tp-missions" data-tab="missions">
+          <h3 class="tab-hd gc">Daily Missions</h3>
+          <div id="mission-list" class="mission-list"></div>
+        </div>
+
+        <div class="tab-content hidden" id="tp-achieve" data-tab="achieve">
+          <h3 class="tab-hd gc">Achievements</h3>
+          <div id="ach-list" class="ach-list"></div>
+        </div>
+
+        <div class="tab-content hidden" id="tp-skins" data-tab="skins">
+          <h3 class="tab-hd gc">Skins &amp; Trails</h3>
+          <h4 class="sub-hd">Snake Skins</h4>
+          <div id="skin-list" class="skin-grid"></div>
+          <h4 class="sub-hd">Trails</h4>
+          <div id="trail-list" class="skin-grid"></div>
+        </div>
+
+        <div class="tab-content hidden" id="tp-loot" data-tab="loot">
+          <h3 class="tab-hd gc">Loot Boxes</h3>
+          <div class="loot-count">You have <span id="loot-count" class="gc">0</span> boxes</div>
+          <button class="btn-glow" id="btn-open-loot" disabled><i class="fas fa-box-open"></i> OPEN</button>
+          <div id="loot-result" class="loot-result hidden"></div>
+          <div class="credits-row"><i class="fas fa-coins"></i> Credits: <span id="menu-credits" class="gc">0</span></div>
+        </div>
+
+        <div class="tab-content hidden" id="tp-settings" data-tab="settings">
+          <h3 class="tab-hd gc">Settings</h3>
+          <div class="setting-row"><span>Sound</span><button id="btn-snd" class="set-btn"><i class="fas fa-volume-up"></i></button></div>
+          <div class="setting-row"><span>Fullscreen</span><button id="btn-fs" class="set-btn"><i class="fas fa-expand"></i></button></div>
+          <div class="setting-row"><span>Prestige</span><button id="btn-prestige" class="set-btn prestige-btn" disabled><i class="fas fa-crown"></i></button></div>
+          <div class="setting-row"><span>Reset All</span><button id="btn-reset" class="set-btn danger"><i class="fas fa-trash"></i></button></div>
+          <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Arcade</a>
+        </div>
+
+        <div class="tab-bar">
+          <button class="tab-btn tab-active" data-tab="play"><i class="fas fa-play"></i><span>Play</span></button>
+          <button class="tab-btn" data-tab="missions"><i class="fas fa-calendar-check"></i><span>Missions</span></button>
+          <button class="tab-btn" data-tab="achieve"><i class="fas fa-trophy"></i><span>Awards</span></button>
+          <button class="tab-btn" data-tab="skins"><i class="fas fa-palette"></i><span>Skins</span></button>
+          <button class="tab-btn" data-tab="loot"><i class="fas fa-box-open"></i><span>Loot</span></button>
+          <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAUSE ===== -->
+    <div id="pause-screen" class="overlay hidden">
+      <div class="modal glass"><h2 class="gc">PAUSED</h2>
+        <button class="btn-glow" id="btn-resume">RESUME</button>
+        <button class="btn-glow btn-sec" id="btn-restart-p">RESTART</button>
+        <button class="btn-glow btn-sec" id="btn-menu-p">MENU</button>
+      </div>
+    </div>
+
+    <!-- ===== GAME OVER ===== -->
+    <div id="go-screen" class="overlay hidden">
+      <div class="modal glass go-modal">
+        <h2 class="gp">GAME OVER</h2>
+        <div class="go-stats" id="go-stats"></div>
+        <div class="go-rewards" id="go-rewards"></div>
+        <p class="go-best" id="go-best"></p>
+        <div class="go-btns">
+          <button class="btn-glow" id="btn-retry"><i class="fas fa-redo"></i> RETRY</button>
+          <button class="btn-glow btn-sec" id="btn-share"><i class="fas fa-share-alt"></i></button>
+          <button class="btn-glow btn-sec" id="btn-menu-go">MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast"><span id="t-icon">🏆</span><div class="toast-body"><div class="toast-lbl">ACHIEVEMENT</div><div id="t-name" class="toast-name">Name</div></div></div>
+
+    <canvas id="share-canvas" width="600" height="340" style="display:none"></canvas>
+
+  </div>
+
+  <!-- SEO Content -->
+  <div class="seo-content">
+    <div class="seo-inner">
+      <h1>Neon Snake Royale — Free Modern Snake Game Online</h1>
+      <p class="seo-tagline">The classic snake formula rebuilt from the ground up with RPG progression, loot boxes, skins, prestige ranks, and daily missions — play free in any browser.</p>
+
+      <h2>About Neon Snake Royale</h2>
+      <p>Neon Snake Royale takes the timeless snake concept and supercharges it with modern game design. Set in a glowing cyberpunk grid, you guide your neon serpent through a field of orbs, hazards, and powerups while growing longer with every bite. But unlike the snake games of decades past, every run in Neon Snake Royale feeds into a deep progression system. Earn XP to level up your profile, collect credits to open loot boxes containing rare skins and trails, and complete daily missions for bonus rewards. When you've reached the pinnacle, the prestige system lets you reset for permanent multipliers and exclusive cosmetics.</p>
+      <p>Eight distinct snake skins — from the default Neon Green to the legendary Prismatic Shift — give your serpent a unique identity on the grid. Six powerups spawn randomly during gameplay: Speed Boost launches you forward, Shield protects against one wall collision, Magnet pulls nearby orbs toward you, Score Doubler multiplies your points, Shrink Ray shortens your tail for tight maneuvers, and Ghost Mode lets you phase through your own body. Four game modes ensure there's always a fresh way to play, and the daily mission system refreshes with three new objectives every 24 hours.</p>
+
+      <h3>How to Play</h3>
+      <p>Direct your snake using the arrow keys, WASD, or swipe gestures on mobile. Consume glowing orbs scattered across the grid to grow longer and earn points. Avoid crashing into walls, obstacles, or your own tail. Collect powerup pickups that appear periodically to gain temporary advantages. Each orb consumed grants XP toward your next level, and every level brings you closer to loot box rewards. Complete daily missions for bonus credits and track your achievements across dozens of milestones.</p>
+
+      <h3>Controls</h3>
+      <table class="controls-table">
+        <thead><tr><th>Platform</th><th>Action</th><th>Input</th></tr></thead>
+        <tbody>
+          <tr><td>Desktop</td><td>Change Direction</td><td>Arrow Keys or WASD</td></tr>
+          <tr><td>Mobile</td><td>Change Direction</td><td>Swipe in desired direction</td></tr>
+          <tr><td>Both</td><td>Pause</td><td>Pause Button / Escape</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Game Modes</h3>
+      <ul>
+        <li><strong>Endless</strong> — Classic snake with no time limit. Grow as long as possible and chase your all-time high score.</li>
+        <li><strong>Time Attack</strong> — Race against a 3-minute clock to rack up the highest score before time expires.</li>
+        <li><strong>Survival</strong> — The grid shrinks over time, forcing you into tighter spaces with less room to maneuver.</li>
+        <li><strong>Challenge</strong> — Pre-set obstacle layouts and target scores that test precision and planning over reflexes.</li>
+      </ul>
+
+      <h3>Features</h3>
+      <ul>
+        <li><strong>8 Unlockable Skins</strong> — Customize your snake with skins earned through gameplay, loot boxes, and prestige milestones.</li>
+        <li><strong>6 Powerups</strong> — Speed Boost, Shield, Magnet, Score Doubler, Shrink Ray, and Ghost Mode add strategic variety.</li>
+        <li><strong>Loot Box System</strong> — Earn boxes through leveling and open them for random skins, trails, and credits.</li>
+        <li><strong>Prestige System</strong> — Reset your progress for permanent score multipliers and exclusive prestige-only cosmetics.</li>
+        <li><strong>Daily Missions</strong> — Three fresh objectives every day that reward bonus credits upon completion.</li>
+        <li><strong>XP &amp; Leveling</strong> — Every orb consumed grants experience, fueling a persistent level-up system across sessions.</li>
+        <li><strong>Trail Effects</strong> — Equip trail styles that leave glowing patterns behind your snake as it moves.</li>
+        <li><strong>Mobile Touch Controls</strong> — Responsive swipe-based directional input optimized for phones and tablets.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- More Games -->
+  <div class="more-games">
+    <div class="more-games-inner">
+      <h2>More Free Games on NeonRush Games</h2>
+      <div class="mg-grid">
+        <a href="/neon-cyber-runner/" class="mg-card"><div class="mg-icon" style="color:#ff007f"><i class="fas fa-bolt"></i></div><div class="mg-info"><div class="mg-name" style="color:#ff007f">Cyber Runner</div><div class="mg-desc">Endless cyberpunk runner</div></div></a>
+        <a href="/neon-breaker/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-circle-notch"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Breaker</div><div class="mg-desc">Brick breaker arcade</div></div></a>
+        <a href="/neon-cosmic-merge/" class="mg-card"><div class="mg-icon" style="color:#a200ff"><i class="fas fa-meteor"></i></div><div class="mg-info"><div class="mg-name" style="color:#a200ff">Cosmic Merge</div><div class="mg-desc">Merge puzzle game</div></div></a>
+        <a href="/neon-survivor/" class="mg-card"><div class="mg-icon" style="color:#ffaa00"><i class="fas fa-crosshairs"></i></div><div class="mg-info"><div class="mg-name" style="color:#ffaa00">Neon Survivor</div><div class="mg-desc">Vampire Survivors-style</div></div></a>
+        <a href="/neon-dash/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-running"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Dash</div><div class="mg-desc">Endless runner with skins</div></div></a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/neon-cyber-runner/">Cyber Runner</a>
+      <a href="/neon-breaker/">Neon Breaker</a>
+      <a href="/neon-cosmic-merge/">Cosmic Merge</a>
+      <a href="/neon-survivor/">Neon Survivor</a>
+      <a href="/neon-dash/">Neon Dash</a>
+      <a href="/neon-snake-royale/">Snake Royale</a>
+    </div>
+    <p>&copy; 2026 <a href="/">NeonRush Games</a>. All games free to play.</p>
+  </footer>
+
+  <script src="../snake.js"></script>
+</body>
+</html>

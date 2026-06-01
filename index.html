@@ -6,12 +6,52 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>NEON ARCADE // Cyberpunk Game Hub</title>
+  <title>NeonRush Games — Free Online Cyberpunk Arcade Games | Play Now</title>
   
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Enter the Neon Arcade: A highly addictive static cyberpunk web game hub featuring premium HTML5 Canvas games, retro styling, and Web Audio synth music.">
-  <meta name="keywords" content="html5 game, cyberpunk arcade, retro game, endless runner, brick breaker, suika merge, web audio synth">
+  <meta name="description" content="Play 7 free cyberpunk arcade games at NeonRush Games. Endless runners, brick breakers, survival shooters, snake battles, and merge puzzles. No download. Mobile-friendly.">
+  <meta name="keywords" content="free online games, cyberpunk arcade, neon games, browser games, html5 games, endless runner, brick breaker, snake game, survival game, merge puzzle">
   <meta name="author" content="Joy">
+  <link rel="canonical" href="https://neonrushgames.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="NeonRush Games — Free Cyberpunk Arcade Games">
+  <meta property="og:description" content="Play 7 free cyberpunk arcade games. Endless runners, survival shooters, snake battles, and more. No download needed.">
+  <meta property="og:url" content="https://neonrushgames.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NeonRush Games">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="NeonRush Games — Free Cyberpunk Arcade Games">
+  <meta name="twitter:description" content="Play 7 free cyberpunk arcade games. No download. Mobile-friendly.">
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "NeonRush Games",
+    "url": "https://neonrushgames.com/",
+    "description": "Free online cyberpunk arcade games. Play in your browser on desktop and mobile.",
+    "author": {"@type": "Person", "name": "Joy"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "NeonRush Games Collection",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "url": "https://neonrushgames.com/neon-cyber-runner/", "name": "Neon Cyber Runner"},
+      {"@type": "ListItem", "position": 2, "url": "https://neonrushgames.com/neon-breaker/", "name": "Neon Breaker"},
+      {"@type": "ListItem", "position": 3, "url": "https://neonrushgames.com/neon-cosmic-merge/", "name": "Cosmic Merge"},
+      {"@type": "ListItem", "position": 4, "url": "https://neonrushgames.com/neon-survivor/", "name": "Neon Survivor"},
+      {"@type": "ListItem", "position": 5, "url": "https://neonrushgames.com/neon-dash/", "name": "Neon Dash"},
+      {"@type": "ListItem", "position": 6, "url": "https://neonrushgames.com/neon-snake-royale/", "name": "Neon Snake Royale"}
+    ]
+  }
+  </script>
   
   <!-- FontAwesome & Theme styling -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,7 +70,7 @@
     <!-- Header -->
     <header class="glass-panel neon-cyan-border" role="banner">
       <div class="logo-container">
-        <h1 class="neon-cyan-text"><i class="fas fa-gamepad" aria-hidden="true"></i> NEON ARCADE <span>V1.0</span></h1>
+        <h1 class="neon-cyan-text"><i class="fas fa-gamepad" aria-hidden="true"></i> NEONRUSH <span>GAMES</span></h1>
       </div>
       
       <div class="system-status">
@@ -45,29 +85,29 @@
     <main id="dashboard-view" role="main">
       
       <div class="games-selection">
-        <h2 class="neon-pink-text" style="font-size: 1.5rem; margin-bottom: 5px;"><i class="fas fa-terminal" aria-hidden="true"></i> Select Core Protocol:</h2>
+        <h2 class="neon-pink-text" style="font-size: 1.5rem; margin-bottom: 5px;"><i class="fas fa-terminal" aria-hidden="true"></i> Free Cyberpunk Arcade Games</h2>
         
         <div class="games-grid" role="list">
           
           <!-- Card: Cyber-Runner -->
-          <div class="game-card runner-card glass-panel" data-game="runner" id="card-runner" role="listitem" tabindex="0" aria-label="Launch Cyber-Runner game">
+          <a href="/neon-cyber-runner/" class="game-card runner-card glass-panel" id="card-runner" role="listitem" tabindex="0" aria-label="Play Neon Cyber Runner" style="text-decoration:none;color:inherit;">
             <div class="game-card-banner">
               <div class="game-icon-frame" style="color: var(--neon-pink);">
                 <i class="fas fa-bolt" aria-hidden="true"></i>
               </div>
             </div>
             <div class="game-card-content">
-              <h3 class="neon-pink-text">Cyber-Runner</h3>
+              <h3 class="neon-pink-text">Cyber Runner</h3>
               <p>Dodge barriers, slide under lasers, and collect glowing power cells in an accelerating retro grid landscape.</p>
               <div class="game-card-stats">
                 <span class="high-score neon-pink-text">BEST: <span id="runner-card-high">0</span></span>
-                <span class="play-badge">LAUNCH &gt;</span>
+                <span class="play-badge">PLAY &gt;</span>
               </div>
             </div>
-          </div>
+          </a>
 
           <!-- Card: Neon Breaker -->
-          <div class="game-card breaker-card glass-panel" data-game="breaker" id="card-breaker" role="listitem" tabindex="0" aria-label="Launch Neon Breaker game">
+          <a href="/neon-breaker/" class="game-card breaker-card glass-panel" id="card-breaker" role="listitem" tabindex="0" aria-label="Play Neon Breaker" style="text-decoration:none;color:inherit;">
             <div class="game-card-banner">
               <div class="game-icon-frame" style="color: var(--neon-cyan);">
                 <i class="fas fa-circle-notch" aria-hidden="true"></i>
@@ -78,13 +118,13 @@
               <p>Unleash plasma balls, trigger chaotic multi-ball splits, fire laser blasters, and decimate glowing layouts.</p>
               <div class="game-card-stats">
                 <span class="high-score neon-cyan-text">BEST: <span id="breaker-card-high">0</span></span>
-                <span class="play-badge">LAUNCH &gt;</span>
+                <span class="play-badge">PLAY &gt;</span>
               </div>
             </div>
-          </div>
+          </a>
 
           <!-- Card: Cosmic Merge -->
-          <div class="game-card merge-card glass-panel" data-game="merge" id="card-merge" role="listitem" tabindex="0" aria-label="Launch Cosmic Merge game">
+          <a href="/neon-cosmic-merge/" class="game-card merge-card glass-panel" id="card-merge" role="listitem" tabindex="0" aria-label="Play Cosmic Merge" style="text-decoration:none;color:inherit;">
             <div class="game-card-banner">
               <div class="game-icon-frame" style="color: var(--neon-purple);">
                 <i class="fas fa-meteor" aria-hidden="true"></i>
@@ -95,13 +135,13 @@
               <p>Drop cells inside the chamber. Match and merge identical cosmic elements to trigger satisfying stellar upgrades.</p>
               <div class="game-card-stats">
                 <span class="high-score neon-purple-text">BEST: <span id="merge-card-high">0</span></span>
-                <span class="play-badge">LAUNCH &gt;</span>
+                <span class="play-badge">PLAY &gt;</span>
               </div>
             </div>
-          </div>
+          </a>
 
           <!-- Card: Neon Survivor (standalone page) -->
-          <a href="survivor.html" class="game-card survivor-card glass-panel" id="card-survivor" role="listitem" tabindex="0" aria-label="Play Neon Survivor" style="text-decoration:none;color:inherit;">
+          <a href="/neon-survivor/" class="game-card survivor-card glass-panel" id="card-survivor" role="listitem" tabindex="0" aria-label="Play Neon Survivor" style="text-decoration:none;color:inherit;">
             <div class="game-card-banner" style="background-image: radial-gradient(circle, rgba(255,170,0,0.2) 0%, rgba(0,0,0,0) 70%); border-bottom: 2px solid rgba(255,170,0,0.2);">
               <div class="game-icon-frame" style="color: var(--neon-yellow);">
                 <i class="fas fa-crosshairs" aria-hidden="true"></i>
@@ -118,7 +158,7 @@
           </a>
 
           <!-- Card: Neon Dash (standalone page) -->
-          <a href="dash.html" class="game-card dash-card glass-panel" id="card-dash" role="listitem" tabindex="0" aria-label="Play Neon Dash" style="text-decoration:none;color:inherit;">
+          <a href="/neon-dash/" class="game-card dash-card glass-panel" id="card-dash" role="listitem" tabindex="0" aria-label="Play Neon Dash" style="text-decoration:none;color:inherit;">
             <div class="game-card-banner" style="background-image: radial-gradient(circle, rgba(0,240,255,0.15) 0%, rgba(0,0,0,0) 70%); border-bottom: 2px solid rgba(0,240,255,0.15);">
               <div class="game-icon-frame" style="color: var(--neon-cyan);">
                 <i class="fas fa-running" aria-hidden="true"></i>
@@ -135,7 +175,7 @@
           </a>
 
           <!-- Card: Neon Snake Royale (standalone page) -->
-          <a href="snake.html" class="game-card snake-card glass-panel" id="card-snake" role="listitem" tabindex="0" aria-label="Play Neon Snake Royale" style="text-decoration:none;color:inherit;">
+          <a href="/neon-snake-royale/" class="game-card snake-card glass-panel" id="card-snake" role="listitem" tabindex="0" aria-label="Play Neon Snake Royale" style="text-decoration:none;color:inherit;">
             <div class="game-card-banner" style="background-image: radial-gradient(circle, rgba(0,255,102,0.15) 0%, rgba(0,0,0,0) 70%); border-bottom: 2px solid rgba(0,255,102,0.15);">
               <div class="game-icon-frame" style="color: var(--neon-green);">
                 <i class="fas fa-dragon" aria-hidden="true"></i>
@@ -273,8 +313,8 @@
 
   <!-- Footer -->
   <footer role="contentinfo">
-    <p>&copy; 2026 NEON ARCADE // Programmed by <span class="neon-cyan-text">Joy</span> with <span class="neon-pink-text">Antigravity AI</span>.</p>
-    <p style="margin-top: 5px; opacity: 0.7;">100% static &middot; Optimized for <a href="https://pages.github.com/" target="_blank" rel="noopener noreferrer">GitHub Pages</a>.</p>
+    <p>&copy; 2026 <span class="neon-cyan-text">NeonRush Games</span> // Created by <span class="neon-pink-text">Joy</span></p>
+    <p style="margin-top: 5px; opacity: 0.7;">100% free &middot; No download &middot; Optimized for <a href="https://pages.github.com/" target="_blank" rel="noopener noreferrer">GitHub Pages</a>.</p>
   </footer>
 
   <!-- Mobile Game Toolbar (fixed bottom bar during gameplay) -->

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Neon Dash — Free Endless Runner Game Online | NeonRush Games</title>
+  <meta name="description" content="Play Neon Dash free. Jump, slide, and dash through a neon cyberpunk city. Unlock skins, complete daily challenges. Inspired by Geometry Dash.">
+  <meta name="keywords" content="neon dash, endless runner game, geometry dash online, cyberpunk runner, free runner game">
+  <link rel="canonical" href="https://neonrushgames.com/neon-dash/">
+  <meta property="og:title" content="Neon Dash — Free Endless Runner Game Online">
+  <meta property="og:description" content="Play Neon Dash free. Jump, slide, and dash through a neon cyberpunk city. Unlock skins, complete daily challenges. Inspired by Geometry Dash.">
+  <meta property="og:url" content="https://neonrushgames.com/neon-dash/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NeonRush Games">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Neon Dash — Free Endless Runner Game Online">
+  <meta name="twitter:description" content="Play Neon Dash free. Jump, slide, and dash through a neon cyberpunk city. Unlock skins, complete daily challenges. Inspired by Geometry Dash.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Neon Dash",
+    "description": "Play Neon Dash free. Jump, slide, and dash through a neon cyberpunk city. Unlock skins, complete daily challenges. Inspired by Geometry Dash.",
+    "url": "https://neonrushgames.com/neon-dash/",
+    "genre": ["Endless Runner"],
+    "gamePlatform": "Web Browser",
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {"@type": "Organization", "name": "NeonRush Games", "url": "https://neonrushgames.com"}
+  }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../game-page.css">
+  <link rel="stylesheet" href="../dash.css">
+</head>
+<body style="margin:0;background:#050110;overflow-x:hidden">
+
+  <!-- Game Wrapper (contains all game DOM elements) -->
+  <div class="game-wrapper">
+
+    <canvas id="game-canvas"></canvas>
+
+    <!-- ===== HUD ===== -->
+    <div id="hud" class="hud hidden">
+      <div class="hud-row">
+        <div class="hud-left">
+          <div class="hud-stat-box"><span class="hud-label">SCORE</span><span class="hud-val" id="hud-score">0</span></div>
+        </div>
+        <div class="hud-center">
+          <div class="hud-powerup hidden" id="hud-powerup"><span id="hud-powerup-icon"></span><div class="hud-powerup-bar"><div class="hud-powerup-fill" id="hud-powerup-fill"></div></div></div>
+        </div>
+        <div class="hud-right">
+          <div class="hud-stat-box"><i class="fas fa-gem"></i> <span id="hud-crystals">0</span></div>
+          <button class="hud-btn" id="btn-pause" aria-label="Pause"><i class="fas fa-pause"></i></button>
+        </div>
+      </div>
+      <div class="hud-combo hidden" id="hud-combo">x<span id="hud-combo-val">2</span> COMBO</div>
+    </div>
+
+    <!-- ===== MAIN MENU ===== -->
+    <div id="menu-screen" class="overlay-screen">
+      <div class="menu-wrap">
+        <h1 class="menu-title glow-cyan">NEON<span class="glow-pink">DASH</span></h1>
+        <p class="menu-sub">Endless Cyberpunk Runner</p>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="tab-play" data-tab="play">
+          <div class="streak-bar" id="streak-bar"><i class="fas fa-fire"></i> <span id="streak-val">0</span> Day Streak</div>
+          <button class="btn-play" id="btn-start"><i class="fas fa-play"></i> RUN</button>
+          <button class="btn-mode" id="btn-daily"><i class="fas fa-calendar-day"></i> Daily Challenge</button>
+          <div class="menu-records" id="menu-records">
+            <div class="rec"><span>Best Score</span><span id="rec-score">0</span></div>
+            <div class="rec"><span>Best Distance</span><span id="rec-dist">0m</span></div>
+            <div class="rec"><span>Total Crystals</span><span id="rec-crystals">0</span></div>
+            <div class="rec"><span>Games Played</span><span id="rec-games">0</span></div>
+          </div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-challenges" data-tab="challenges">
+          <h3 class="tab-title glow-cyan">Daily Challenges</h3>
+          <div id="daily-list" class="daily-list"></div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-achievements" data-tab="achievements">
+          <h3 class="tab-title glow-cyan">Achievements</h3>
+          <div id="ach-list" class="ach-list"></div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-skins" data-tab="skins">
+          <h3 class="tab-title glow-cyan">Runner Skins</h3>
+          <div class="skin-progress" id="skin-progress-bar"><div class="skin-progress-fill" id="skin-progress-fill"></div></div>
+          <p class="skin-progress-text" id="skin-progress-text"></p>
+          <div id="skin-list" class="skin-list"></div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-settings" data-tab="settings">
+          <h3 class="tab-title glow-cyan">Settings</h3>
+          <div class="setting-row"><span>Sound</span><button id="btn-sound" class="setting-btn"><i class="fas fa-volume-up"></i></button></div>
+          <div class="setting-row"><span>Fullscreen</span><button id="btn-fullscreen" class="setting-btn"><i class="fas fa-expand"></i></button></div>
+          <div class="setting-row"><span>Reset Progress</span><button id="btn-reset" class="setting-btn danger"><i class="fas fa-trash"></i></button></div>
+          <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Arcade</a>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+          <button class="tab-btn tab-active" data-tab="play"><i class="fas fa-play"></i><span>Play</span></button>
+          <button class="tab-btn" data-tab="challenges"><i class="fas fa-calendar-check"></i><span>Daily</span></button>
+          <button class="tab-btn" data-tab="achievements"><i class="fas fa-trophy"></i><span>Awards</span></button>
+          <button class="tab-btn" data-tab="skins"><i class="fas fa-palette"></i><span>Skins</span></button>
+          <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAUSE ===== -->
+    <div id="pause-screen" class="overlay-screen hidden">
+      <div class="modal glass-panel">
+        <h2 class="glow-cyan">PAUSED</h2>
+        <button class="btn-glow" id="btn-resume">RESUME</button>
+        <button class="btn-glow btn-sec" id="btn-restart-pause">RESTART</button>
+        <button class="btn-glow btn-sec" id="btn-menu-pause">MENU</button>
+      </div>
+    </div>
+
+    <!-- ===== GAME OVER ===== -->
+    <div id="gameover-screen" class="overlay-screen hidden">
+      <div class="modal glass-panel gameover-modal">
+        <h2 class="glow-pink">CRASHED</h2>
+        <div class="go-stats" id="go-stats"></div>
+        <p class="go-best" id="go-best"></p>
+        <div class="go-btns">
+          <button class="btn-glow" id="btn-retry"><i class="fas fa-redo"></i> RETRY</button>
+          <button class="btn-glow btn-sec" id="btn-share"><i class="fas fa-share-alt"></i> SHARE</button>
+          <button class="btn-glow btn-sec" id="btn-menu-over">MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ACHIEVEMENT TOAST ===== -->
+    <div id="toast" class="toast"><span id="toast-icon">🏆</span><div class="toast-body"><div class="toast-label">ACHIEVEMENT</div><div id="toast-name" class="toast-name">Name</div></div></div>
+
+    <!-- ===== SHARE CANVAS (hidden) ===== -->
+    <canvas id="share-canvas" width="600" height="340" style="display:none;"></canvas>
+
+  </div>
+
+  <!-- SEO Content -->
+  <div class="seo-content">
+    <div class="seo-inner">
+      <h1>Neon Dash — Free Endless Cyberpunk Runner Game</h1>
+      <p class="seo-tagline">Sprint through a glowing cyberpunk cityscape, leap over obstacles, slide under barriers, and dash through danger — all free in your browser with no downloads.</p>
+
+      <h2>About Neon Dash</h2>
+      <p>Neon Dash is a high-speed endless runner set in a neon-drenched cyberpunk metropolis. The road ahead never ends and neither does the intensity. Your runner accelerates over time, meaning the reflexes that carried you through the first 500 meters won't be enough at 5,000. Seven distinct obstacle types — from low barriers and overhead beams to moving platforms and electromagnetic walls — ensure that every stretch of road feels fresh. Collect glowing crystals scattered along the route to unlock seven unique runner skins, each with its own visual flair and trail effects.</p>
+      <p>Five powerups keep the action unpredictable: the Magnet pulls all nearby crystals to you, the Shield absorbs one hit, Slow-Mo gives you precious reaction time, Double Score multiplies your points, and the Dash Boost lets you blast through obstacles invincibly. A combo system rewards flawless sequences of dodges with escalating score multipliers, and daily challenges set specific goals — like collecting 50 crystals in a single run or surviving 90 seconds without dashing — that reward completion with bonus crystals. The streak system tracks consecutive days played and unlocks bonus content for loyal runners.</p>
+
+      <h3>How to Play</h3>
+      <p>Your runner moves forward automatically at ever-increasing speed. Jump to clear ground obstacles, slide to pass under overhead barriers, and dash to blast through hazards with a brief burst of invincibility. Collect crystals to build your total and unlock new skins. Chain perfect dodges to build your combo multiplier and maximize your score. Grab powerups floating along the track to gain temporary advantages. The run ends when you collide with an obstacle you haven't dodged or dashed through.</p>
+
+      <h3>Controls</h3>
+      <table class="controls-table">
+        <thead><tr><th>Platform</th><th>Action</th><th>Input</th></tr></thead>
+        <tbody>
+          <tr><td>Desktop</td><td>Jump</td><td>Space or Up Arrow</td></tr>
+          <tr><td>Desktop</td><td>Slide</td><td>Down Arrow</td></tr>
+          <tr><td>Desktop</td><td>Dash</td><td>Shift</td></tr>
+          <tr><td>Mobile</td><td>Jump</td><td>Swipe Up</td></tr>
+          <tr><td>Mobile</td><td>Slide</td><td>Swipe Down</td></tr>
+          <tr><td>Mobile</td><td>Dash</td><td>Double-Tap</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Game Features</h3>
+      <ul>
+        <li><strong>7 Obstacle Types</strong> — Ground spikes, overhead beams, moving platforms, electromagnetic walls, and more keep every run feeling unique.</li>
+        <li><strong>5 Powerups</strong> — Magnet, Shield, Slow-Mo, Double Score, and Dash Boost add strategic depth to every run.</li>
+        <li><strong>7 Unlockable Skins</strong> — Earn crystals through gameplay to unlock visually distinct runner characters with unique trail effects.</li>
+        <li><strong>Daily Challenges</strong> — Fresh objectives every 24 hours that reward bonus crystals for completion.</li>
+        <li><strong>Achievement System</strong> — Track your milestones across distance, score, crystals collected, and perfect dodge streaks.</li>
+        <li><strong>Streak System</strong> — Play daily to build your streak counter and unlock streak-exclusive rewards.</li>
+        <li><strong>Combo Multiplier</strong> — Chain consecutive dodges without mistakes to multiply your score exponentially.</li>
+        <li><strong>Mobile-Optimized</strong> — Touch-friendly swipe controls designed for responsive mobile gameplay.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- More Games -->
+  <div class="more-games">
+    <div class="more-games-inner">
+      <h2>More Free Games on NeonRush Games</h2>
+      <div class="mg-grid">
+        <a href="/neon-cyber-runner/" class="mg-card"><div class="mg-icon" style="color:#ff007f"><i class="fas fa-bolt"></i></div><div class="mg-info"><div class="mg-name" style="color:#ff007f">Cyber Runner</div><div class="mg-desc">Endless cyberpunk runner</div></div></a>
+        <a href="/neon-breaker/" class="mg-card"><div class="mg-icon" style="color:#00f0ff"><i class="fas fa-circle-notch"></i></div><div class="mg-info"><div class="mg-name" style="color:#00f0ff">Neon Breaker</div><div class="mg-desc">Brick breaker arcade</div></div></a>
+        <a href="/neon-cosmic-merge/" class="mg-card"><div class="mg-icon" style="color:#a200ff"><i class="fas fa-meteor"></i></div><div class="mg-info"><div class="mg-name" style="color:#a200ff">Cosmic Merge</div><div class="mg-desc">Merge puzzle game</div></div></a>
+        <a href="/neon-survivor/" class="mg-card"><div class="mg-icon" style="color:#ffaa00"><i class="fas fa-crosshairs"></i></div><div class="mg-info"><div class="mg-name" style="color:#ffaa00">Neon Survivor</div><div class="mg-desc">Vampire Survivors-style</div></div></a>
+        <a href="/neon-snake-royale/" class="mg-card"><div class="mg-icon" style="color:#00ff66"><i class="fas fa-dragon"></i></div><div class="mg-info"><div class="mg-name" style="color:#00ff66">Snake Royale</div><div class="mg-desc">Snake with progression</div></div></a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/neon-cyber-runner/">Cyber Runner</a>
+      <a href="/neon-breaker/">Neon Breaker</a>
+      <a href="/neon-cosmic-merge/">Cosmic Merge</a>
+      <a href="/neon-survivor/">Neon Survivor</a>
+      <a href="/neon-dash/">Neon Dash</a>
+      <a href="/neon-snake-royale/">Snake Royale</a>
+    </div>
+    <p>&copy; 2026 <a href="/">NeonRush Games</a>. All games free to play.</p>
+  </footer>
+
+  <script src="../dash.js"></script>
+</body>
+</html>
