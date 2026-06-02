@@ -29,6 +29,12 @@
   z-index: 1;
 }
 
+/* Override game CSS that locks body scrolling — allows SEO content below wrapper */
+html, body {
+  overflow: visible !important;
+  height: auto !important;
+}
+
 /* Override position:fixed from game CSS to position:absolute within wrapper */
 .game-wrapper #game-canvas {
   position: absolute !important;
@@ -52,7 +58,13 @@
 .game-wrapper .hud-combo,
 .game-wrapper .hud-power,
 .game-wrapper #h-power,
-.game-wrapper #hud-combo {
+.game-wrapper #hud-combo,
+.game-wrapper .joystick-zone,
+.game-wrapper #joystick-zone,
+.game-wrapper .hud-controls,
+.game-wrapper .hud-minimap,
+.game-wrapper .hud-weapons,
+.game-wrapper #hud-weapons {
   position: absolute !important;
 }
 
