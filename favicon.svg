@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Neon Cyan Glow for the N -->
+    <filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="blur2"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="28" result="blur3"/>
+      <feMerge>
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Neon Pink Glow for the Hexagon -->
+    <filter id="glow-pink" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Outer ambient glow -->
+    <radialGradient id="ambient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0a0220"/>
+      <stop offset="60%" stop-color="#050110"/>
+      <stop offset="100%" stop-color="#050110"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="#050110"/>
+  <rect width="512" height="512" rx="64" fill="url(#ambient)"/>
+
+  <!-- Hexagon Frame -->
+  <polygon
+    points="256,52 438,158 438,354 256,460 74,354 74,158"
+    fill="none"
+    stroke="#ff007f"
+    stroke-width="14"
+    stroke-linejoin="round"
+    filter="url(#glow-pink)"
+  />
+
+  <!-- Inner hexagon subtle fill -->
+  <polygon
+    points="256,52 438,158 438,354 256,460 74,354 74,158"
+    fill="rgba(255,0,127,0.04)"
+    stroke="none"
+  />
+
+  <!-- Bold N Letter -->
+  <text
+    x="256" y="310"
+    text-anchor="middle"
+    font-family="'Arial Black', 'Impact', sans-serif"
+    font-weight="900"
+    font-size="280"
+    fill="#00f0ff"
+    filter="url(#glow-cyan)"
+    letter-spacing="-8"
+  >N</text>
+</svg>

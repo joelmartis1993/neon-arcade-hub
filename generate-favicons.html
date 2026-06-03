@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head><title>NeonRush Favicon Generator</title></head>
+<body style="background:#111;color:#fff;font-family:sans-serif;padding:20px;">
+<h1>NeonRush Games — Favicon Generator</h1>
+<p>Click "Generate All" to create every favicon size. Right-click each image → "Save image as" to download.</p>
+<button onclick="generateAll()" style="padding:12px 24px;font-size:16px;background:#00f0ff;color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Generate All Favicons</button>
+<div id="output" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:20px;"></div>
+
+<script>
+const SIZES = [
+  { name: 'favicon-16x16.png', size: 16 },
+  { name: 'favicon-32x32.png', size: 32 },
+  { name: 'favicon-48x48.png', size: 48 },
+  { name: 'apple-touch-icon.png', size: 180 },
+  { name: 'android-chrome-192x192.png', size: 192 },
+  { name: 'android-chrome-512x512.png', size: 512 },
+];
+
+function drawFavicon(ctx, s) {
+  const c = s / 512; // scale factor
+
+  // Background
+  ctx.fillStyle = '#050110';
+  ctx.beginPath();
+  const r = 64 * c;
+  ctx.roundRect(0, 0, s, s, r > 2 ? r : 0);
+  ctx.fill();
+
+  // Hexagon
+  const hex = [
+    [256, 52], [438, 158], [438, 354], [256, 460], [74, 354], [74, 158]
+  ].map(p => [p[0] * c, p[1] * c]);
+
+  // Hex glow
+  ctx.save();
+  ctx.shadowColor = '#ff007f';
+  ctx.shadowBlur = Math.max(12 * c, 2);
+  ctx.strokeStyle = '#ff007f';
+  ctx.lineWidth = Math.max(14 * c, 1.5);
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  hex.forEach((p, i) => i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]));
+  ctx.closePath();
+  ctx.stroke();
+  // Double glow pass
+  ctx.shadowBlur = Math.max(24 * c, 4);
+  ctx.strokeStyle = 'rgba(255,0,127,0.5)';
+  ctx.lineWidth = Math.max(8 * c, 1);
+  ctx.stroke();
+  ctx.restore();
+
+  // N letter
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const fontSize = Math.max(280 * c, 10);
+  ctx.font = `900 ${fontSize}px "Arial Black", "Impact", sans-serif`;
+
+  // N glow layers
+  ctx.shadowColor = '#00f0ff';
+  ctx.shadowBlur = Math.max(30 * c, 3);
+  ctx.fillStyle = 'rgba(0,240,255,0.3)';
+  ctx.fillText('N', s / 2, s / 2 + 12 * c);
+
+  ctx.shadowBlur = Math.max(16 * c, 2);
+  ctx.fillStyle = 'rgba(0,240,255,0.6)';
+  ctx.fillText('N', s / 2, s / 2 + 12 * c);
+
+  // Solid N
+  ctx.shadowBlur = Math.max(8 * c, 1);
+  ctx.fillStyle = '#00f0ff';
+  ctx.fillText('N', s / 2, s / 2 + 12 * c);
+  ctx.restore();
+}
+
+function generateAll() {
+  const output = document.getElementById('output');
+  output.innerHTML = '';
+
+  SIZES.forEach(({ name, size }) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    drawFavicon(ctx, size);
+
+    const div = document.createElement('div');
+    div.style.cssText = 'text-align:center;background:#222;padding:16px;border-radius:12px;border:1px solid #333;';
+
+    const preview = document.createElement('div');
+    preview.style.cssText = `width:${Math.max(size, 64)}px;height:${Math.max(size, 64)}px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;`;
+
+    const img = new Image();
+    img.src = canvas.toDataURL('image/png');
+    img.style.cssText = `width:${Math.max(size, 64)}px;height:${Math.max(size, 64)}px;image-rendering:${size <= 48 ? 'pixelated' : 'auto'};`;
+    preview.appendChild(img);
+
+    const label = document.createElement('div');
+    label.textContent = `${name} (${size}×${size})`;
+    label.style.cssText = 'font-size:12px;color:#aaa;margin-bottom:8px;';
+
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = name;
+    link.textContent = '⬇ Download';
+    link.style.cssText = 'display:inline-block;padding:6px 14px;background:#00f0ff;color:#000;border-radius:6px;text-decoration:none;font-size:12px;font-weight:bold;';
+
+    div.appendChild(preview);
+    div.appendChild(label);
+    div.appendChild(link);
+    output.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
